@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -42,8 +41,8 @@ public class LoginActivity extends ActionBarActivity {
         this.passwordTxt = (EditText) findViewById(R.id.password_txt);
 
         createDB();
+        mDBHelper.addUser("Pedro","bananas");
 
-        testInsertLogin();
     }
 
     public void createDB(){
@@ -51,23 +50,7 @@ public class LoginActivity extends ActionBarActivity {
 
     }
 
-    public void testInsertLogin(){
-        SQLiteDatabase db = mDBHelper.getWritableDatabase();
 
-        // Create a new map of values, where column names are the keys
-        ContentValues values = new ContentValues();
-        values.put(AirDeskContract.UserEntry.COLUMN_USER_ID, 1);
-        values.put(AirDeskContract.UserEntry.COLUMN_USER_NAME, "Pedro");
-        values.put(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD, "bananas");
-
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId;
-        newRowId = db.insert(
-                AirDeskContract.UserEntry.TABLE_NAME,
-                 null,
-                values);
-
-    }
 
     public boolean checkLogin(){
 

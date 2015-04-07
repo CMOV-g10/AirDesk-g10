@@ -36,4 +36,23 @@ public final class AirDeskContract {
         public static final String COLUMN_FILE_CONTENT = "content";
 
     }
+    public static abstract class UserHasWorkspaceEntry implements BaseColumns{
+        public static final String TABLE_NAME = "userhasworkspace";
+        public static final String COLUMN_UHW_ID = "uhwid";
+        public static final String COLUMN_UHW_UID = "uid";
+        public static final String COLUMN_UHW_WSID = "wsid";
+    }
+    public static abstract class WorkspaceHasSubscriptionsEntry implements BaseColumns{
+        public static final String TABLE_NAME = "workspacehassubscriptions";
+        public static final String COLUMN_WHS_ID = "whsid";
+        public static final String COLUMN_WHS_UID = "uid";
+        public static final String COLUMN_WHS_WSID = "wsid";
+    }
+    public static abstract class WorkspaceHasFileEntry implements BaseColumns{
+        public static final String TABLE_NAME = "workspacehasfile";
+        public static final String COLUMN_WHF_ID = "whfif";
+        public static final String COLUMN_WHF_FID = "fid";
+        public static final String COLUMN_WHF_WSID = "wsid";
+    }
+
 }
