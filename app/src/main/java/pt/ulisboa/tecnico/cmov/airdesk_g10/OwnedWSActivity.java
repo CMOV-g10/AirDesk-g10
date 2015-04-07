@@ -7,6 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 
 public class OwnedWSActivity extends ActionBarActivity {
@@ -34,6 +37,18 @@ public class OwnedWSActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
+        //generate WS list
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("WS1");
+        list.add("WS2");
+
+        //instantiate custom adapter
+        WSListCustomAdapter adapter = new WSListCustomAdapter(list, this);
+
+        //handle listview and assign adapter
+        ListView lView = (ListView)findViewById(R.id.wsListView);
+        lView.setAdapter(adapter);
     }
 
 
