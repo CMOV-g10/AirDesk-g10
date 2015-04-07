@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -25,6 +26,7 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         this.loginBtn = (Button) findViewById(R.id.login_btn);
         this.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +48,7 @@ public class LoginActivity extends ActionBarActivity {
 
     public void createDB(){
         mDBHelper = new AirDeskDbHelper(getApplicationContext());
+
     }
 
     public void testInsertLogin(){
@@ -61,15 +64,17 @@ public class LoginActivity extends ActionBarActivity {
         long newRowId;
         newRowId = db.insert(
                 AirDeskContract.UserEntry.TABLE_NAME,
-                 "NULL",
+                 null,
                 values);
 
     }
 
     public boolean checkLogin(){
+
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
+
         String[] projection = {
                 AirDeskContract.UserEntry._ID,
                 AirDeskContract.UserEntry.COLUMN_USER_NAME,
@@ -77,19 +82,11 @@ public class LoginActivity extends ActionBarActivity {
         };
 
         // How you want the results sorted in the resulting Cursor
-        String sortOrder =
-                AirDeskContract.UserEntry.COLUMN_USER_NAME + " DESC";
 
-        Cursor c = db.query(
-                AirDeskContract.UserEntry.TABLE_NAME,  // The table to query
-                projection,                               // The columns to return
-                "*",                                    // The columns for the WHERE clause
-                null,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
-
+        String Sql= "SELECT * FROM "+AirDeskContract.UserEntry.TABLE_NAME;
+        Toast.makeText(this,Sql,Toast.LENGTH_SHORT).show();
+        Cursor c = db.rawQuery(Sql, null);
+        Toast.makeText(this,"QUERY",Toast.LENGTH_SHORT).show();
         String loginName = usernameTxt.getText().toString();
         String loginPassword = passwordTxt.getText().toString();
 
