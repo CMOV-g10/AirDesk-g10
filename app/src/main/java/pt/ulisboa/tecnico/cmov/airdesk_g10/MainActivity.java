@@ -6,14 +6,34 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private Button ownedWSBtn;
+    private Button foreignWSBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.ownedWSBtn = (Button) findViewById(R.id.ownedWS_btn);
+        this.ownedWSBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, OwnedWSActivity.class);
+                startActivity(intent);
+            }
+        });
+        this.foreignWSBtn = (Button) findViewById(R.id.foreignWS_btn);
+        this.foreignWSBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ForeignWSActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -37,15 +57,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-    public void startOwnedWSActivity(View view) {
-        Intent intent = new Intent(MainActivity.this, OwnedWSActivity.class);
-        startActivity(intent);
-    }
-
-    public void startForeignWSActivity(View view) {
-        Intent intent = new Intent(MainActivity.this, ForeignWSActivity.class);
-        startActivity(intent);
     }
 
 }

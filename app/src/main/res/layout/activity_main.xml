@@ -7,21 +7,30 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:text="Owned Workspaces"
-        android:id="@+id/owned_btn"
+        android:id="@+id/ownedWS_btn"
+        android:longClickable="false"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="121dp"
-        android:onClick="startOwnedWSActivity" />
+        android:layout_alignRight="@+id/foreignWS_btn"
+        android:layout_alignEnd="@+id/foreignWS_btn"
+        android:layout_alignLeft="@+id/foreignWS_btn"
+        android:layout_alignStart="@+id/foreignWS_btn"
+        android:layout_marginBottom="275dp"
+        android:layout_marginTop="25dp" />
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:text="Foreign Workspaces"
-        android:id="@+id/foreign_btn"
+        android:id="@+id/foreignWS_btn"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="118dp"
-        android:onClick="startForeignWSActivity" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="275dp"
+        android:layout_marginBottom="25dp" />
 </RelativeLayout>

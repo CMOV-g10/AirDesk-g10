@@ -1,17 +1,39 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 
 public class OwnedWSActivity extends ActionBarActivity {
+
+    private Button addWSBtn;
+    private Button homeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owned_ws);
+        this.addWSBtn = (Button) findViewById(R.id.addWS_btn);
+        this.addWSBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OwnedWSActivity.this, ConfigWSActivity.class);
+                startActivity(intent);
+            }
+        });
+        this.homeBtn = (Button) findViewById(R.id.home_btn);
+        this.homeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OwnedWSActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 

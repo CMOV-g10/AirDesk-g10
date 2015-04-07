@@ -1,17 +1,39 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 
 public class ForeignWSActivity extends ActionBarActivity {
+
+    private Button searchWSBtn;
+    private Button homeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_foreign_ws);
+        this.searchWSBtn = (Button) findViewById(R.id.searchWS_btn);
+        this.searchWSBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ForeignWSActivity.this, SearchByTagsActivity.class);
+                startActivity(intent);
+            }
+        });
+        this.homeBtn = (Button) findViewById(R.id.home_btn);
+        this.homeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ForeignWSActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 
