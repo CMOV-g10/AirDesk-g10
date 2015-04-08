@@ -129,33 +129,33 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
-    public ArrayList<String> getUserWorkSpaces(String uid){
+    public ArrayList<String> getUserWorkSpaces(int uid){
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlUHW= "SELECT * FROM "+AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME;
         ArrayList<String> wid=new ArrayList<String>();
         Cursor cUHW=db.rawQuery(SqlUHW,null);
         while(!cUHW.isAfterLast()){
-            String cUHWuid=cUHW.getString(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_UID));
+            int cUHWuid=cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_UID));
             String cUHWwsid=cUHW.getString(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_WSID));
-            if(cUHWuid.equals(uid))wid.add(cUHWwsid);
+            if(uid==cUHWuid)wid.add(cUHWwsid);
             cUHW.moveToNext();
         }
         return wid;
     }
 
-    public String getUserId(String username){
+    public int getUserId(String username){
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlUid= "SELECT * FROM "+AirDeskContract.UserEntry.TABLE_NAME;
         Cursor cuid = db.rawQuery(SqlUid, null);
-        String uid=new String("TOBE");
+        int uid=-1;
         while(!cuid.isAfterLast()){
             String cusername=cuid.getString(cuid.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
             if(cusername.equals(username)){
-                uid=cuid.getString(cuid.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
+                uid=cuid.getInt(cuid.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
             }
             cuid.moveToNext();
         }
-        if(uid.equals("TOBE"))throw new UserDoesNotExistException(username);
+        if(uid==-1)throw new UserDoesNotExistException(username);
         else return uid;
     }
 
@@ -236,7 +236,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         User u=null;
         while(!c.isAfterLast()){
             String cuname=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
-            String cuid=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
+            int cuid=c.getInt(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
             String cpass=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
             if(cuname.equals(username)){
                 u=new User(Integer.valueOf(cuid),cuname,cpass);
@@ -255,11 +255,11 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         String SqlWname= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
         Cursor cwname = db.rawQuery(SqlWname, null);
         cwname.moveToFirst();
-        String uid=this.getUserId(username);
+        int uid=this.getUserId(username);
         ArrayList<String> wid=this.getUserWorkSpaces(uid);
 
         while(!cwname.isAfterLast()){
-            String twid=cwname.getString(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID));
+            int twid=cwname.getInt(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID));
             String twname=cwname.getString(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME));
             for(String s: wid){
                 if(s.equals(twid)&&twname.equals(wname)){
