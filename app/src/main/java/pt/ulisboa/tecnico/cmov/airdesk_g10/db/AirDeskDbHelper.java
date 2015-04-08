@@ -129,18 +129,18 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
-    public ArrayList<String> getUserWorkSpaces(int uid){
+    public ArrayList<Workspace> getUserWorkSpaces(int uid){
+        try{
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlUHW= "SELECT * FROM "+AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME;
-        ArrayList<String> wid=new ArrayList<String>();
+        ArrayList<Workspace> wid=new ArrayList<>();
         Cursor cUHW=db.rawQuery(SqlUHW,null);
         while(!cUHW.isAfterLast()){
-            int cUHWuid=cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_UID));
-            String cUHWwsid=cUHW.getString(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_WSID));
-            if(uid==cUHWuid)wid.add(cUHWwsid);
-            cUHW.moveToNext();
+            if(uid==cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_UID))){
+            wid.add(this.getWorkspace(cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_WSID))));}
         }
         return wid;
+    }catch(WorkspaceDoesNotExistException w){return null;}
     }
 
     public int getUserId(String username){
@@ -256,13 +256,13 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         Cursor cwname = db.rawQuery(SqlWname, null);
         cwname.moveToFirst();
         int uid=this.getUserId(username);
-        ArrayList<String> wid=this.getUserWorkSpaces(uid);
+        ArrayList<Workspace> wid=this.getUserWorkSpaces(uid);
 
         while(!cwname.isAfterLast()){
             int twid=cwname.getInt(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID));
             String twname=cwname.getString(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME));
-            for(String s: wid){
-                if(s.equals(twid)&&twname.equals(wname)){
+            for(Workspace w: wid){
+                if(w.getWsid()==twid&&twname.equals(wname)){
                     return true;
                 }
             cwname.moveToNext();
