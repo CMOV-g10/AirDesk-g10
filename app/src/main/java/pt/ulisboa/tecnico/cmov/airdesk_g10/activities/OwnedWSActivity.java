@@ -16,6 +16,8 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
 
 
 public class OwnedWSActivity extends ActionBarActivity {
@@ -53,12 +55,18 @@ public class OwnedWSActivity extends ActionBarActivity {
         //generate WS list
         ArrayList<Workspace> list = context.getLoggedUser().getUserworkspaces();
         if (list.isEmpty()) {
-            Toast.makeText(context,"tou bazia", Toast.LENGTH_LONG).show();
-            context.getLoggedUser().setUserworkspaces(context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid()));
-            list = context.getLoggedUser().getUserworkspaces();
+           // Toast.makeText(context,"tou bazia", Toast.LENGTH_LONG).show();
+            try {
+                context.getLoggedUser().setUserworkspaces(context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid()));
+                list = context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid());
+            } catch (WorkspaceDoesNotExistException w){
+                Toast.makeText(context,w.getMessage(), Toast.LENGTH_LONG).show();
+            } catch (UserDoesNotExistException u){
+                Toast.makeText(context,u.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }
 
-        Toast.makeText(context,list.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(context,list.toString(), Toast.LENGTH_LONG).show();
         //instantiate custom adapter
         WSListCustomAdapter adapter = new WSListCustomAdapter(list, this);
 

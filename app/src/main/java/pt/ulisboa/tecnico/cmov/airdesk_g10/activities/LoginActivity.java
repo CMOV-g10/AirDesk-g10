@@ -81,19 +81,28 @@ public class LoginActivity extends ActionBarActivity {
     public void populateDomain(){
         context.getmDBHelper().onUpgrade(context.getmDBHelper().getWritableDatabase(), context.getmDBHelper().DATABASE_VERSION, context.getmDBHelper().DATABASE_VERSION);
         try {
-            this.context.getmDBHelper().addUser("Pedro", "bananas");
+            this.context.getmDBHelper().addUser("p", "b");
 
         } catch (UserAlreadyExistsException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         try{
-            this.context.getmDBHelper().addWorkspace("Pedro", "CMOV", true, 50, "");
+            this.context.getmDBHelper().addWorkspace("p", "CMOV", true, 50, "");
         } catch (WorkspaceAlreadyExistsException u){
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         } catch (UserAlreadyExistsException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
+
+        try{
+            this.context.getmDBHelper().addWorkspace("p", "AASMA", true, 50, "");
+        } catch (WorkspaceAlreadyExistsException u){
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (UserAlreadyExistsException u) {
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+        }
+       // Toast.makeText(context, context.getmDBHelper().getUserWorkSpaces(context.getmDBHelper().getUserId("P")).toString(), Toast.LENGTH_LONG).show();
 
     }
 
