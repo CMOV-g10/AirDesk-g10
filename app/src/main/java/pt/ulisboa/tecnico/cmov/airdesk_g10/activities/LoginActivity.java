@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.airdesk_g10;
+package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,6 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskContract;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskDbHelper;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 
 
 public class LoginActivity extends ActionBarActivity {

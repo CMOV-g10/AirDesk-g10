@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.airdesk_g10;
+package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,29 +8,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 
-public class MainActivity extends ActionBarActivity {
 
-    private Button ownedWSBtn;
-    private Button foreignWSBtn;
+public class ForeignWSActivity extends ActionBarActivity {
+
+    private Button searchWSBtn;
+    private Button homeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        this.ownedWSBtn = (Button) findViewById(R.id.ownedWS_btn);
-        this.ownedWSBtn.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_foreign_ws);
+        this.searchWSBtn = (Button) findViewById(R.id.searchWS_btn);
+        this.searchWSBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, OwnedWSActivity.class);
+                Intent intent = new Intent(ForeignWSActivity.this, SearchByTagsActivity.class);
                 startActivity(intent);
             }
         });
-        this.foreignWSBtn = (Button) findViewById(R.id.foreignWS_btn);
-        this.foreignWSBtn.setOnClickListener(new View.OnClickListener() {
+        this.homeBtn = (Button) findViewById(R.id.home_btn);
+        this.homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ForeignWSActivity.class);
+                Intent intent = new Intent(ForeignWSActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -40,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_foreign_w, menu);
         return true;
     }
 
@@ -58,5 +60,4 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }
