@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.airdesk_g10;
+package pt.ulisboa.tecnico.cmov.airdesk_g10.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,8 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 
 /**
  * Created by Pedro on 4/6/2015.

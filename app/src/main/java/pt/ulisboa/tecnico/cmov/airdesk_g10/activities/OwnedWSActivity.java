@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.airdesk_g10;
+package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,31 +7,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+
+import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
 
 
-public class ConfigWSActivity extends ActionBarActivity {
+public class OwnedWSActivity extends ActionBarActivity {
 
-    private Button editSubsBtn;
-    private Button createBtn;
+    private ListView wsList;
+    private Button addWSBtn;
     private Button homeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_config_ws);
-        this.editSubsBtn = (Button) findViewById(R.id.editSubs_btn);
-        this.editSubsBtn.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_owned_ws);
+        this.addWSBtn = (Button) findViewById(R.id.addWS_btn);
+        this.addWSBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ConfigWSActivity.this, SubscriptionListActivity.class);
-                startActivity(intent);
-            }
-        });
-        this.createBtn = (Button) findViewById(R.id.create_btn);
-        this.createBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ConfigWSActivity.this, OwnedWSActivity.class);
+                Intent intent = new Intent(OwnedWSActivity.this, ConfigWSActivity.class);
                 startActivity(intent);
             }
         });
@@ -39,18 +37,29 @@ public class ConfigWSActivity extends ActionBarActivity {
         this.homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ConfigWSActivity.this, MainActivity.class);
+                Intent intent = new Intent(OwnedWSActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
 
+        //generate WS list
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("WS1");
+        list.add("WS2");
+
+        //instantiate custom adapter
+        WSListCustomAdapter adapter = new WSListCustomAdapter(list, this);
+
+        //handle listview and assign adapter
+        this.wsList = (ListView)findViewById(R.id.ws_list);
+        this.wsList.setAdapter(adapter);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_config_w, menu);
+        getMenuInflater().inflate(R.menu.menu_owned_w, menu);
         return true;
     }
 

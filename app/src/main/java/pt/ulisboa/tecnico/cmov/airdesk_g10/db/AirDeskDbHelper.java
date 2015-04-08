@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.airdesk_g10;
+package pt.ulisboa.tecnico.cmov.airdesk_g10.db;
 
 import android.content.ContentValues;
 import android.content.Context;
