@@ -5,14 +5,23 @@ package pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions;
  */
 public class UserDoesNotExistException extends AirDeskException{
 
+        private int uid;
         private String username;
         public UserDoesNotExistException(){}
         public UserDoesNotExistException(String username){
             this.username= username;
         }
+        public UserDoesNotExistException(int  uid){
+            this.uid= uid;
+        }
+
         @Override
         public String getMessage(){
             return "Username: "+this.username+" does not exist.";
         }
+
+        public String getUidMessage(){
+        return "Uid:"+this.uid+"does not exist";
+    }
 
 }

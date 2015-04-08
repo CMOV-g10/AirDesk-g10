@@ -5,14 +5,21 @@ package pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions;
  */
 public class WorkspaceDoesNotExistException extends AirDeskException{
 
+    private int wid;
     private String wsname;
     public WorkspaceDoesNotExistException(){}
     public WorkspaceDoesNotExistException(String wname){
         this.wsname= wname;
     }
+    public WorkspaceDoesNotExistException(int wid){
+        this.wid= wid;
+    }
     @Override
     public String getMessage(){
         return "Workspace: "+this.wsname+" does not exist.";
+    }
+    public String getWidMessage(){
+        return "Wid: "+this.wid+" does not exist.";
     }
 
 }
