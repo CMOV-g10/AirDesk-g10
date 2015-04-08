@@ -2,10 +2,13 @@ package pt.ulisboa.tecnico.cmov.airdesk_g10.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.Random;
+
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserAlreadyExistsException;
 
 /**
  * Created by luis on 4/7/15.
@@ -123,11 +126,23 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
 
 
-    public void addUser(String username, String password){
+    public void addUser(String username, String password)throws UserAlreadyExistsException{
+        SQLiteDatabase db = this.getReadableDatabase();
 
+        String Sql= "SELECT * FROM "+AirDeskContract.UserEntry.TABLE_NAME;
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c = db.rawQuery(Sql, null);
 
+        c.moveToFirst();
+
+        while (!c.isAfterLast()){
+            String dbUserName = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
+            String dbUserPassword = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
+            if(dbUserName.equals(username) && dbUserPassword.equals(password))
+                throw new UserAlreadyExistsException(username);
+            c.moveToNext();
+        }
+        db= this.getWritableDatabase();
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(AirDeskContract.UserEntry.COLUMN_USER_ID, generator());
