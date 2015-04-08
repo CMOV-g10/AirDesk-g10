@@ -18,6 +18,7 @@ public class LoginActivity extends ActionBarActivity {
     private EditText usernameTxt;
     private EditText passwordTxt;
     private Button loginBtn;
+    private Button registerBtn;
 
     private AirDeskDbHelper mDBHelper;
 
@@ -35,6 +36,14 @@ public class LoginActivity extends ActionBarActivity {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                 }
+            }
+        });
+        this.registerBtn = (Button) findViewById(R.id.register_btn);
+        this.registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
         });
         this.usernameTxt = (EditText) findViewById(R.id.username_txt);

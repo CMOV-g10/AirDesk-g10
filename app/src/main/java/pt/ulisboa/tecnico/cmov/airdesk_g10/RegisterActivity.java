@@ -9,31 +9,39 @@ import android.widget.Button;
 import android.widget.EditText;
 
 
-public class SearchByTagsActivity extends ActionBarActivity {
+public class RegisterActivity extends ActionBarActivity {
 
-    private EditText searchTxt;
-    private Button searchBtn;
+    private EditText usernameTxt;
+    private EditText passwordTxt;
+    private EditText passwordConfirmationTxt;
+    private Button registerBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_by_tags);
+        setContentView(R.layout.activity_register);
 
-        this.searchBtn = (Button) findViewById(R.id.search_btn);
-        this.searchBtn.setOnClickListener(new View.OnClickListener() {
+        this.registerBtn = (Button) findViewById(R.id.register_btn);
+        this.registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Produce search query to DB
+
+                /*if (checkLogin()) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }*/
             }
         });
-        this.searchTxt = (EditText) findViewById(R.id.search_txt);
+        this.usernameTxt = (EditText) findViewById(R.id.username_txt);
+        this.passwordTxt = (EditText) findViewById(R.id.password_txt);
+        this.passwordConfirmationTxt = (EditText) findViewById(R.id.passwordConfirmation_txt);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_search_by_tags, menu);
+        getMenuInflater().inflate(R.menu.menu_register, menu);
         return true;
     }
 

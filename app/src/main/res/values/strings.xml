@@ -12,4 +12,5 @@
     <string name="title_activity_file_list">FileListActivity</string>
     <string name="title_activity_edit_file">EditFileActivity</string>
     <string name="title_activity_read_file">ReadFileActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
 </resources>
