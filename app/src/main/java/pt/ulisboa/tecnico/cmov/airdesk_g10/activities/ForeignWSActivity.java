@@ -52,7 +52,10 @@ public class ForeignWSActivity extends ActionBarActivity {
 
         //generate WS list
         ArrayList<Workspace> list = context.getLoggedUser().getUsersubscriptions();
-
+        if (list.isEmpty()) {
+           // context.getLoggedUser().setUsersubscriptions(context.getmDBHelper().getUserSubscriptions(context.getLoggedUser().getUserid()));
+           // list = context.getLoggedUser().getUsersubscriptions();
+        }
         //instantiate custom adapter
         ForeignWSListCustomAdapter adapter = new ForeignWSListCustomAdapter(list, this);
 

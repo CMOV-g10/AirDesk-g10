@@ -16,13 +16,14 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
 
+
 /**
  * Created by luis on 4/7/15.
  */
 public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "AirDesk.db";
 
     private static final String TEXT_TYPE = " TEXT";
@@ -133,11 +134,13 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         try{
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlUHW= "SELECT * FROM "+AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME;
-        ArrayList<Workspace> wid=new ArrayList<>();
+        ArrayList<Workspace> wid=new ArrayList<Workspace>();
         Cursor cUHW=db.rawQuery(SqlUHW,null);
+        cUHW.moveToFirst();
         while(!cUHW.isAfterLast()){
             if(uid==cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_UID))){
-            wid.add(this.getWorkspace(cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_WSID))));}
+               wid.add(this.getWorkspace(cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_WSID))));
+            }
         }
         return wid;
     }catch(WorkspaceDoesNotExistException w){return null;}
@@ -147,16 +150,15 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlUid= "SELECT * FROM "+AirDeskContract.UserEntry.TABLE_NAME;
         Cursor cuid = db.rawQuery(SqlUid, null);
-        int uid=-1;
+        cuid.moveToFirst();
         while(!cuid.isAfterLast()){
             String cusername=cuid.getString(cuid.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
             if(cusername.equals(username)){
-                uid=cuid.getInt(cuid.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
+                return cuid.getInt(cuid.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
             }
             cuid.moveToNext();
         }
-        if(uid==-1)throw new UserDoesNotExistException(username);
-        else return uid;
+        throw new UserDoesNotExistException(username);
     }
 
     public User getUser(int uid) {
@@ -206,7 +208,6 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             String wssql = "SELECT * FROM " + AirDeskContract.WorkspaceEntry.TABLE_NAME;
             Cursor c = db.rawQuery(wssql, null);
             c.moveToFirst();
-            Workspace workspace = null;
             String wsname, wsquota, wspublic, wstags;
             User wsowner;
             while (!c.isAfterLast()) {
@@ -214,10 +215,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                     wsname = c.getString(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME));
                     wsquota = c.getString(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_QUOTA));
                     wspublic = c.getString(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC));
-                    wstags = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
                     wsowner = getWorkspaceOwner(wid);
-                    workspace = new Workspace(wid, wsname, Integer.getInteger(wsquota), true, wsowner); //TRUE AIN T TRUE
-                    return workspace;
+                   return new Workspace(wid, wsname, Integer.getInteger(wsquota), true, wsowner); //TRUE AIN T TRUE
                 }
             }throw new WorkspaceDoesNotExistException(wid);
         } catch(UserDoesNotExistException u){throw u;}
@@ -233,44 +232,41 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         String Sql= "SELECT * FROM "+AirDeskContract.UserEntry.TABLE_NAME;
         Cursor c = db.rawQuery(Sql,null);
         c.moveToFirst();
-        User u=null;
         while(!c.isAfterLast()){
             String cuname=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
-            int cuid=c.getInt(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
-            String cpass=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
             if(cuname.equals(username)){
-                u=new User(Integer.valueOf(cuid),cuname,cpass);
+                int cuid=c.getInt(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
+                String cpass=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
+                return new User(cuid,cuname,cpass);
             }
         }
-        if(u==null){throw new UserDoesNotExistException(username);}
-        return u;
-
-
-
+        throw new UserDoesNotExistException(username);
     }
 
     public boolean workspaceExists(String wname, String username){
-        try{
-        SQLiteDatabase db = this.getReadableDatabase();
-        String SqlWname= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
-        Cursor cwname = db.rawQuery(SqlWname, null);
-        cwname.moveToFirst();
-        int uid=this.getUserId(username);
-        ArrayList<Workspace> wid=this.getUserWorkSpaces(uid);
+            SQLiteDatabase db = this.getReadableDatabase();
+            String SqlWname= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
+            Cursor cwname = db.rawQuery(SqlWname, null);
+            cwname.moveToFirst();
+            int uid;
+            try {
+                uid = this.getUserId(username);
+            }catch(UserDoesNotExistException u){throw u;}
 
-        while(!cwname.isAfterLast()){
-            int twid=cwname.getInt(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID));
-            String twname=cwname.getString(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME));
-            for(Workspace w: wid){
-                if(w.getWsid()==twid&&twname.equals(wname)){
-                    return true;
+            ArrayList<Workspace> wid=this.getUserWorkSpaces(uid);
+
+            while(!cwname.isAfterLast()){
+                int twid=cwname.getInt(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID));
+                String twname=cwname.getString(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME));
+                for(Workspace w: wid){
+                    if(w.getWsid()==twid&&twname.equals(wname)){
+                        return true;
+                    }
+                cwname.moveToNext();
                 }
-            cwname.moveToNext();
-            }
         }
         //returns false if no user with that username and password exists
-        return false;}
-        catch(UserDoesNotExistException u){return false;}
+        return false;
     }
 
     public boolean userExists(String username){
@@ -313,12 +309,13 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public void addUser(String username, String password)throws UserAlreadyExistsException{
+    public void addUser(String username, String password) {
+
         if(userExists(username)){
             throw new UserAlreadyExistsException(username);
         }
-        SQLiteDatabase db = this.getWritableDatabase();
 
+        SQLiteDatabase db = this.getWritableDatabase();
 
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
@@ -336,40 +333,49 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     }
 
     public void addWorkspace(String username,String wname, boolean pub,int quota, String tags){
-       try{
-           if(workspaceExists(wname, username)){
-            throw new WorkspaceAlreadyExistsException(wname);
-        }
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.beginTransaction();
-        int gen= generator();
-            // Create a new map of values, where column names are the keys
-        ContentValues values = new ContentValues();
-        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID, gen);
-        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME,wname);
-        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC,pub);
-        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_QUOTA,quota);
-        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_TAGS,tags);
+        try {
+            if(workspaceExists(wname, username))
+                throw new WorkspaceAlreadyExistsException(wname);
+        } catch (UserDoesNotExistException u) {throw u;}
 
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId;
-        newRowId = db.insert(
-                AirDeskContract.WorkspaceEntry.TABLE_NAME,
-                null,
-                values);
+        int uid;
+       try {
+          uid = getUserId(username);
+       } catch (UserDoesNotExistException u) {throw u;}
+
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            db.beginTransaction();
+
+            int gen= generator();
+                // Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+            values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID, gen);
+            values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME,wname);
+            values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC,pub);
+            values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_QUOTA,quota);
+            values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_TAGS,tags);
+
+            // Insert the new row, returning the primary key value of the new row
+            long newRowId;
+            newRowId = db.insert(
+                    AirDeskContract.WorkspaceEntry.TABLE_NAME,
+                    null,
+                    values);
 
 
-        ContentValues uhwValues= new ContentValues();
-        uhwValues.put(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_ID,generator());
-        uhwValues.put(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_UID,getUserId(username));
-        uhwValues.put(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_WSID,gen);
-        long newRowId2;
-        newRowId2=db.insert(
-                AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME,
-                null,
-                uhwValues);
-        db.endTransaction();}
-       catch(UserDoesNotExistException u){u.getMessage();}
+            ContentValues uhwValues= new ContentValues();
+            uhwValues.put(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_ID,generator());
+            uhwValues.put(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_UID,uid);
+            uhwValues.put(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_WSID,gen);
+            long newRowId2;
+            newRowId2=db.insert(
+                    AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME,
+                    null,
+                    uhwValues);
+
+           db.endTransaction();
+
     }
 
     public int generator(){

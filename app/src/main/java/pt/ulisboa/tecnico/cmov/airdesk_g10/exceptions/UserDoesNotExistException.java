@@ -21,7 +21,7 @@ public class UserDoesNotExistException extends AirDeskException{
         }
 
         public String getUidMessage(){
-        return "Uid:"+this.uid+"does not exist";
+        return "User id: "+this.uid+" does not exist.";
     }
 
 }

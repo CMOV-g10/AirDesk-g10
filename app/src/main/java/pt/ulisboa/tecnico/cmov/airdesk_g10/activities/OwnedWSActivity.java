@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -51,7 +52,13 @@ public class OwnedWSActivity extends ActionBarActivity {
 
         //generate WS list
         ArrayList<Workspace> list = context.getLoggedUser().getUserworkspaces();
+        if (list.isEmpty()) {
+            Toast.makeText(context,"tou bazia", Toast.LENGTH_LONG).show();
+            context.getLoggedUser().setUserworkspaces(context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid()));
+            list = context.getLoggedUser().getUserworkspaces();
+        }
 
+        Toast.makeText(context,list.toString(), Toast.LENGTH_LONG).show();
         //instantiate custom adapter
         WSListCustomAdapter adapter = new WSListCustomAdapter(list, this);
 

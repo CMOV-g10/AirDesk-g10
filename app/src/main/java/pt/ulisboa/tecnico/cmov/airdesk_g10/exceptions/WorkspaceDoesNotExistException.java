@@ -19,7 +19,7 @@ public class WorkspaceDoesNotExistException extends AirDeskException{
         return "Workspace: "+this.wsname+" does not exist.";
     }
     public String getWidMessage(){
-        return "Wid: "+this.wid+" does not exist.";
+        return "Workspace id: "+this.wid+" does not exist.";
     }
 
 }
