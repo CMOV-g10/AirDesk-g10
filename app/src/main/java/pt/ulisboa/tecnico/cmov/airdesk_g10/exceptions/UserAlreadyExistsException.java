@@ -11,6 +11,6 @@ public class UserAlreadyExistsException extends AirDeskException{
     }
     @Override
     public String getMessage(){
-        return "Username:"+this.username+"already exists";
+        return "Username: "+this.username+" already exists.";
     }
 }

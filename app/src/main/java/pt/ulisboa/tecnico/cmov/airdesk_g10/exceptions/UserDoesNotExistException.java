@@ -12,7 +12,7 @@ public class UserDoesNotExistException extends AirDeskException{
         }
         @Override
         public String getMessage(){
-            return "Username:"+this.username+"does not exist";
+            return "Username: "+this.username+" does not exist.";
         }
 
 }
