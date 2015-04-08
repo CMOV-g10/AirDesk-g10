@@ -12,16 +12,17 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 
 /**
  * Created by Pedro on 4/8/2015.
  */
 public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapter {
 
-    private ArrayList<String> list = new ArrayList<String>();
+    private ArrayList<Workspace> list = new ArrayList<Workspace>();
     private Context context;
 
-    public ForeignWSListCustomAdapter(ArrayList<String> list, Context context) {
+    public ForeignWSListCustomAdapter(ArrayList<Workspace> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -53,7 +54,7 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.get(position));
+        listItemText.setText(list.get(position).getWsname());
 
         //Handle buttons and add onClickListeners
         Button subscribeBtn = (Button)view.findViewById(R.id.subscribe_btn);

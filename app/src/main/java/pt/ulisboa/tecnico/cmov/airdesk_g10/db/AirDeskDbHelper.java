@@ -133,7 +133,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
         Cursor c = db.rawQuery(Sql, null);
 
-        c.moveToFirst();
+        /*c.moveToFirst();
 
         while (!c.isAfterLast()){
             String dbUserName = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
@@ -142,7 +142,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                 throw new UserAlreadyExistsException(username);
             c.moveToNext();
         }
-        db= this.getWritableDatabase();
+        db= this.getWritableDatabase();*/
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(AirDeskContract.UserEntry.COLUMN_USER_ID, generator());

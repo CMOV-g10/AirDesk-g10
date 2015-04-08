@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 
 
 public class OwnedWSActivity extends ActionBarActivity {
@@ -43,9 +44,9 @@ public class OwnedWSActivity extends ActionBarActivity {
         });
 
         //generate WS list
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("WS1");
-        list.add("WS2");
+        ArrayList<Workspace> list = new ArrayList<Workspace>();
+        /*list.add("WS1");
+        list.add("WS2");*/
 
         //instantiate custom adapter
         WSListCustomAdapter adapter = new WSListCustomAdapter(list, this);

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.ForeignWSListCustomAdapter;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 
 
 public class SearchByTagsActivity extends ActionBarActivity {
@@ -36,9 +37,9 @@ public class SearchByTagsActivity extends ActionBarActivity {
         this.searchTxt = (EditText) findViewById(R.id.search_txt);
 
         //generate WS list
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("WS3");
-        list.add("WS4");
+        ArrayList<Workspace> list = new ArrayList<Workspace>();
+        /*list.add("WS3");
+        list.add("WS4");*/
 
         //instantiate custom adapter
         ForeignWSListCustomAdapter adapter = new ForeignWSListCustomAdapter(list, this);
