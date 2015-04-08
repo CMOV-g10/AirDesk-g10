@@ -60,7 +60,6 @@ public class LoginActivity extends ActionBarActivity {
 
     public void createDB(){
         mDBHelper = new AirDeskDbHelper(getApplicationContext());
-
     }
 
 
