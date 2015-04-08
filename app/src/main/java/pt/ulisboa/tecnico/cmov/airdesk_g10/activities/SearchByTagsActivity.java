@@ -7,12 +7,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.ForeignWSListCustomAdapter;
 
 
 public class SearchByTagsActivity extends ActionBarActivity {
 
+    private ListView wsList;
     private EditText searchTxt;
     private Button searchBtn;
 
@@ -29,6 +34,18 @@ public class SearchByTagsActivity extends ActionBarActivity {
             }
         });
         this.searchTxt = (EditText) findViewById(R.id.search_txt);
+
+        //generate WS list
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("WS3");
+        list.add("WS4");
+
+        //instantiate custom adapter
+        ForeignWSListCustomAdapter adapter = new ForeignWSListCustomAdapter(list, this);
+
+        //handle listview and assign adapter
+        this.wsList = (ListView)findViewById(R.id.fws_list);
+        this.wsList.setAdapter(adapter);
     }
 
 

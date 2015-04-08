@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 
 /**
- * Created by Pedro on 4/6/2015.
+ * Created by Pedro on 4/8/2015.
  */
-public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
+public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapter {
 
     private ArrayList<String> list = new ArrayList<String>();
     private Context context;
 
-    public WSListCustomAdapter(ArrayList<String> list, Context context) {
+    public ForeignWSListCustomAdapter(ArrayList<String> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -48,7 +48,7 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
         View view = convertView;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.ws_list_item, null);
+            view = inflater.inflate(R.layout.foreign_ws_list_item, null);
         }
 
         //Handle TextView and display string from your list
@@ -56,18 +56,9 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
         listItemText.setText(list.get(position));
 
         //Handle buttons and add onClickListeners
-        Button deleteBtn = (Button)view.findViewById(R.id.delete_btn);
-        Button editBtn = (Button)view.findViewById(R.id.edit_btn);
+        Button subscribeBtn = (Button)view.findViewById(R.id.subscribe_btn);
 
-        deleteBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                //do something
-                list.remove(position); //or some other task
-                notifyDataSetChanged();
-            }
-        });
-        editBtn.setOnClickListener(new View.OnClickListener(){
+        subscribeBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 //do something
@@ -78,3 +69,4 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
         return view;
     }
 }
+
