@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.airdesk_g10;
+package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -7,6 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 
 
 public class RegisterActivity extends ActionBarActivity {
