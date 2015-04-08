@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
+import android.app.Application;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskContract;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskDbHelper;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
@@ -19,27 +22,38 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 
 public class LoginActivity extends ActionBarActivity {
 
+    private AirDesk context;
     private EditText usernameTxt;
     private EditText passwordTxt;
     private Button loginBtn;
     private Button registerBtn;
-
-    private AirDeskDbHelper mDBHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        context = (AirDesk) getApplicationContext();
+
         this.loginBtn = (Button) findViewById(R.id.login_btn);
         this.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String loginName = usernameTxt.getText().toString();
+                String loginPassword = passwordTxt.getText().toString();
 
-                if(checkLogin()) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
+                if(context.getmDBHelper().userExists(loginName)) {
+                    if (context.getmDBHelper().userExists(loginName, loginPassword)){
+                        context.setLoggedUser(context.getmDBHelper().searchUser(loginName));
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(context, "User password is invalid.", Toast.LENGTH_LONG);
+                    }
+                } else {
+                    Toast.makeText(context, "User does not exist.", Toast.LENGTH_LONG);
                 }
+
             }
         });
         this.registerBtn = (Button) findViewById(R.id.register_btn);
@@ -53,20 +67,16 @@ public class LoginActivity extends ActionBarActivity {
         this.usernameTxt = (EditText) findViewById(R.id.username_txt);
         this.passwordTxt = (EditText) findViewById(R.id.password_txt);
 
-        createDB();
-        mDBHelper.addUser("Pedro","bananas");
-
     }
 
-    public void createDB(){
-        mDBHelper = new AirDeskDbHelper(getApplicationContext());
+    public void populateDomain(){
+        this.context.getmDBHelper().addUser("Pedro", "bananas");
     }
-
-
 
     public boolean checkLogin(){
 
-        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        AirDesk context = (AirDesk) getApplicationContext();
+        SQLiteDatabase db = context.getmDBHelper().getReadableDatabase();
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
 
@@ -79,9 +89,7 @@ public class LoginActivity extends ActionBarActivity {
         // How you want the results sorted in the resulting Cursor
 
         String Sql= "SELECT * FROM "+AirDeskContract.UserEntry.TABLE_NAME;
-        Toast.makeText(this,Sql,Toast.LENGTH_SHORT).show();
         Cursor c = db.rawQuery(Sql, null);
-        Toast.makeText(this,"QUERY",Toast.LENGTH_SHORT).show();
         String loginName = usernameTxt.getText().toString();
         String loginPassword = passwordTxt.getText().toString();
 

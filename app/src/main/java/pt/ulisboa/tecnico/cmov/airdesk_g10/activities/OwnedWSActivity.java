@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
@@ -18,6 +19,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 
 public class OwnedWSActivity extends ActionBarActivity {
 
+    private AirDesk context;
     private ListView wsList;
     private Button addWSBtn;
     private Button homeBtn;
@@ -26,11 +28,15 @@ public class OwnedWSActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owned_ws);
+
+        context = (AirDesk) getApplicationContext();
         this.addWSBtn = (Button) findViewById(R.id.addWS_btn);
         this.addWSBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(OwnedWSActivity.this, ConfigWSActivity.class);
+                intent.putExtra("NEW_WS", true);
+                intent.putExtra("WS_ID", 0);
                 startActivity(intent);
             }
         });
@@ -44,9 +50,7 @@ public class OwnedWSActivity extends ActionBarActivity {
         });
 
         //generate WS list
-        ArrayList<Workspace> list = new ArrayList<Workspace>();
-        /*list.add("WS1");
-        list.add("WS2");*/
+        ArrayList<Workspace> list = context.getLoggedUser().getUserworkspaces();
 
         //instantiate custom adapter
         WSListCustomAdapter adapter = new WSListCustomAdapter(list, this);
@@ -54,6 +58,7 @@ public class OwnedWSActivity extends ActionBarActivity {
         //handle listview and assign adapter
         this.wsList = (ListView)findViewById(R.id.ws_list);
         this.wsList.setAdapter(adapter);
+
     }
 
 

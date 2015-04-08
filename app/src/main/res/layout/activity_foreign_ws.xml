@@ -9,7 +9,7 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView2"
+        android:id="@+id/sub_list"
         android:layout_above="@+id/searchWS_btn" />
 
     <Button
@@ -18,14 +18,14 @@
         android:text="Search"
         android:id="@+id/searchWS_btn"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/listView2"
-        android:layout_alignEnd="@+id/listView2" />
+        android:layout_alignRight="@+id/sub_list"
+        android:layout_alignEnd="@+id/sub_list" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Home"
         android:id="@+id/home_btn"
-        android:layout_below="@+id/listView2"
+        android:layout_below="@+id/sub_list"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

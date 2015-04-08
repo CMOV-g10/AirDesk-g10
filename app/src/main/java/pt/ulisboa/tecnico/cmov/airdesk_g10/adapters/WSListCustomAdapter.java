@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.ConfigWSActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 
 /**
@@ -71,7 +73,10 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
         editBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //do something
+                Intent intent = new Intent(context, ConfigWSActivity.class);
+                intent.putExtra("NEW_WS", false);
+                intent.putExtra("WS_ID", list.get(position).getWsid());
+                context.startActivity(intent);
                 notifyDataSetChanged();
             }
         });

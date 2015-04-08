@@ -7,12 +7,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 
+import java.util.ArrayList;
+
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.ForeignWSListCustomAdapter;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 
 
 public class ForeignWSActivity extends ActionBarActivity {
 
+    private AirDesk context;
+    private ListView subList;
     private Button searchWSBtn;
     private Button homeBtn;
 
@@ -20,6 +29,9 @@ public class ForeignWSActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_foreign_ws);
+
+        context = (AirDesk) getApplicationContext();
+
         this.searchWSBtn = (Button) findViewById(R.id.searchWS_btn);
         this.searchWSBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,6 +48,18 @@ public class ForeignWSActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
+
+        //generate WS list
+        ArrayList<Workspace> list = context.getLoggedUser().getUsersubscriptions();
+
+        //instantiate custom adapter
+        ForeignWSListCustomAdapter adapter = new ForeignWSListCustomAdapter(list, this);
+
+        //handle listview and assign adapter
+        this.subList = (ListView)findViewById(R.id.sub_list);
+        this.subList.setAdapter(adapter);
+
     }
 
 

@@ -8,11 +8,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    private AirDesk context;
     private Button ownedWSBtn;
     private Button foreignWSBtn;
 
@@ -20,6 +22,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = (AirDesk) getApplicationContext();
+
         this.ownedWSBtn = (Button) findViewById(R.id.ownedWS_btn);
         this.ownedWSBtn.setOnClickListener(new View.OnClickListener() {
             @Override

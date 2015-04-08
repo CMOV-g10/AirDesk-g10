@@ -20,6 +20,9 @@ public class User {
         this.userid = userid;
         this.username = username;
         this.userpassword = userpassword;
+
+        this.userworkspaces = new ArrayList<Workspace>();
+        this.usersubscriptions = new ArrayList<Workspace>();
     }
 
     public int getUserid() {

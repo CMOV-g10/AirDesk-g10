@@ -8,9 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 
@@ -57,12 +59,21 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
         listItemText.setText(list.get(position).getWsname());
 
         //Handle buttons and add onClickListeners
-        Button subscribeBtn = (Button)view.findViewById(R.id.subscribe_btn);
+        final ToggleButton subscribeBtn = (ToggleButton) view.findViewById(R.id.subscribe_btn);
+        subscribeBtn.setChecked(true);
 
         subscribeBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //do something
+                boolean on = subscribeBtn.isChecked();
+                if (on){
+
+
+
+                }else{
+                    int wsId = list.get(position).getWsid();
+
+                }
                 notifyDataSetChanged();
             }
         });

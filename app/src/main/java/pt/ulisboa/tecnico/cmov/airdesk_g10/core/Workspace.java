@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.cmov.airdesk_g10.core;
 
 import java.util.ArrayList;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskDbHelper;
+
 /**
  * Created by luis on 4/8/15.
  */
@@ -25,6 +27,27 @@ public class Workspace {
         this.wsquota = wsquota;
         this.wspublic = wspublic;
         this.wsowner = wsowner;
+
+        this.wstags = new ArrayList<String>(){
+            private static final long serialVersionUID = 1L;
+
+            @Override public String toString()
+            {
+                String result = "";
+                for(String s : this){
+                    result = result + s + ",";
+                }
+
+                if(!result.equals(""))
+                return result.substring(0,result.length()-1);
+                else
+                return result;
+            }
+        };
+
+        this.wssubscription = new ArrayList<User>();
+        this.wsfiles = new ArrayList<File>();
+
     }
 
     public int getWsid() {
