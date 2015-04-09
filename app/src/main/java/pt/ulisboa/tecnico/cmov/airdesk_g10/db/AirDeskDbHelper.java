@@ -283,7 +283,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
         ArrayList<Workspace> wlist= new ArrayList<>(this.getUserWorkSpaces(ownerID));
         for(Workspace w:wlist){
-            if(w.getWsname()==wsname){
+            if(w.getWsname().equals(wsname)){
                 return w.getWsid();}
         }
 
@@ -578,6 +578,22 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public boolean fileExists(int fid,int wid) {
+   /*     ArrayList<File> filelist;
+        try {
+            filelist = getWorkspaceFiles(wid);
+        } catch(FileDoesNotExistException f){
+            throw f;
+        } catch(WorkspaceDoesNotExistException w){
+            throw w;
+        }
+        for (File f : filelist) {
+            if (true) {
+                return true;
+            }
+        }*/
+        return false;
+    }
 
 
     public int getWorkspaceByFile(int fid){
@@ -790,6 +806,27 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         String whereclause = AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID + " = "+ wid +" and "+
                             AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID+" = "+ uid;
                return db.delete(AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME,whereclause,null)>0;
+    }
+    public boolean removeFile(int fid,int wid){
+       /* if(fileExists(fid,wid))*/
+        return true;
+    }
+    public boolean removeWorkspace(int wid){
+       /* if(!workspaceExists(wid)){
+            throw new WorkspaceDoesNotExistException(wid);
+        }
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.beginTransaction();
+        try{
+            String wcWE;
+            String wcUHW;
+            String wc;
+            return true;
+
+        }
+        */
+        return true;
+
     }
 
     public int generator(){
