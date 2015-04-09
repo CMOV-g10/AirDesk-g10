@@ -130,6 +130,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
+
     public ArrayList<Workspace> getUserWorkSpaces(int uid){
         Cursor cUHW;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -199,6 +200,24 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     }
 
+    public int getWorkspaceId(String wsname) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String SqlUid= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
+        Cursor c = db.rawQuery(SqlUid, null);
+        c.moveToFirst();
+        while(!c.isAfterLast()){
+            String cwsname=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
+            if(cwsname.equals(wsname)){
+                int wsid = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
+                c.close();
+                return wsid;
+            }
+            c.moveToNext();
+        }
+        c.close();
+        throw new WorkspaceDoesNotExistException(wsname);
+    }
+
     public User getWorkspaceOwner(int wid) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -229,17 +248,21 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         try {
 
             c.moveToFirst();
-            String wsname, wspublic, wstags;
+            String wsname, wstags;
             User wsowner;
-            int wsquota;
+            int wsquota, wspublic;
+            boolean isPublic;
             while (!c.isAfterLast()) {
                 if (wid == c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID))) {
                     wsname = c.getString(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME));
                     wsquota = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_QUOTA));
-                    //wspublic = c.getString(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC));
+                    wspublic = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC));
                     wsowner = getWorkspaceOwner(wid);
                     c.close();
-                   return new Workspace(wid, wsname, wsquota, true, wsowner); //TRUE AIN T TRUE
+                    if(wspublic==0)
+                        isPublic = false;
+                    else isPublic = true;
+                   return new Workspace(wid, wsname, wsquota, isPublic, wsowner); //TRUE AIN T TRUE
                 }
                 c.moveToNext();
             }
@@ -262,6 +285,29 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                 String cpass=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
                 c.close();
                 return new User(cuid,cuname,cpass);
+            }
+            c.moveToNext();
+        }
+        c.close();
+        throw new UserDoesNotExistException(username);
+    }
+
+    public Workspace searchWorkspace(String wsname, String username) {
+        int wsid, userid;
+        try{userid = getUserId(username);} catch(UserDoesNotExistException u) {throw u;}
+        try{wsid = getWorkspaceId(wsname);} catch(UserDoesNotExistException u) {throw u;}
+        Workspace workspace;
+        SQLiteDatabase db= this.getReadableDatabase();
+
+        String sql= "SELECT * FROM " + AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME;
+        Cursor c = db.rawQuery(sql,null);
+        c.moveToFirst();
+        while(!c.isAfterLast()){
+            if(    (userid == c.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_UID))
+                && (wsid == c.getColumnIndexOrThrow(AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_WSID))) {
+                    try{workspace = getWorkspace(wsid);} catch(UserDoesNotExistException u) {c.close(); throw u;}
+                    c.close();
+                    return workspace;
             }
             c.moveToNext();
         }
@@ -292,7 +338,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                 cwname.moveToNext();
                 }
         }
-        //returns false if no user with that username and password exists
+        //returns false if no such workspace exists
         cwname.close();
         return false;
     }
