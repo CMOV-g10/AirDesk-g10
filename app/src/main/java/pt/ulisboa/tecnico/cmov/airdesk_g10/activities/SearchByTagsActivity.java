@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -11,22 +12,43 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.ForeignWSListCustomAdapter;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.JoinWSListCustomAdapter;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 
 
 public class SearchByTagsActivity extends ActionBarActivity {
 
+    private AirDesk context;
     private ListView wsList;
     private EditText searchTxt;
     private Button searchBtn;
+    private Button homeBtn;
+    private Button backBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_by_tags);
 
+        this.homeBtn = (Button) findViewById(R.id.home_btn);
+        this.homeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SearchByTagsActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        this.backBtn = (Button) findViewById(R.id.back_btn);
+        this.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SearchByTagsActivity.this, ForeignWSActivity.class);
+                startActivity(intent);
+            }
+        });
         this.searchBtn = (Button) findViewById(R.id.search_btn);
         this.searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,7 +64,7 @@ public class SearchByTagsActivity extends ActionBarActivity {
         list.add("WS4");*/
 
         //instantiate custom adapter
-        ForeignWSListCustomAdapter adapter = new ForeignWSListCustomAdapter(list, this);
+        JoinWSListCustomAdapter adapter = new JoinWSListCustomAdapter(list, this, context);
 
         //handle listview and assign adapter
         this.wsList = (ListView)findViewById(R.id.fws_list);

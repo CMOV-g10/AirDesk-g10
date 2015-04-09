@@ -17,15 +17,14 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 /**
- * Created by Pedro on 4/8/2015.
+ * Created by Pedro on 4/9/2015.
  */
-public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapter {
-
+public class JoinWSListCustomAdapter extends BaseAdapter implements ListAdapter {
     private ArrayList<Workspace> list = new ArrayList<Workspace>();
     private Context context;
     private AirDesk airDesk;
 
-    public ForeignWSListCustomAdapter(ArrayList<Workspace> list, Context context, AirDesk airDesk) {
+    public JoinWSListCustomAdapter(ArrayList<Workspace> list, Context context, AirDesk airDesk) {
         this.list = list;
         this.context = context;
         this.airDesk = airDesk;
@@ -53,7 +52,7 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
         View view = convertView;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.foreign_ws_list_item, null);
+            view = inflater.inflate(R.layout.join_list_item, null);
         }
 
         //Handle TextView and display string from your list
@@ -61,9 +60,9 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
         listItemText.setText(list.get(position).getWsname());
 
         //Handle buttons and add onClickListeners
-        final Button leaveBtn = (Button) view.findViewById(R.id.leave_btn);
+        final Button joinBtn = (Button) view.findViewById(R.id.join_btn);
 
-        leaveBtn.setOnClickListener(new View.OnClickListener() {
+        joinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int wid = list.get(position).getWsid();
@@ -78,5 +77,5 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
 
         return view;
     }
-}
 
+}

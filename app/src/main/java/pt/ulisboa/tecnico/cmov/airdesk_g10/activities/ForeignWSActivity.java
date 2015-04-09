@@ -23,9 +23,10 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistExcep
 public class ForeignWSActivity extends ActionBarActivity {
 
     private AirDesk context;
-    private ListView subList;
+    private ListView foreignList;
     private Button searchWSBtn;
     private Button homeBtn;
+    private Button backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,14 @@ public class ForeignWSActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+        this.backBtn = (Button) findViewById(R.id.back_btn);
+        this.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ForeignWSActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         //generate WS list
@@ -61,19 +70,20 @@ public class ForeignWSActivity extends ActionBarActivity {
            // list = context.getLoggedUser().getUsersubscriptions();
             try {
                 context.getLoggedUser().setUsersubscriptions(context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid()));
-                list = context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid());
+                list = context.getmDBHelper().getUserSubscriptions(context.getLoggedUser().getUserid());
             } catch (WorkspaceDoesNotExistException w){
                 Toast.makeText(context, w.getMessage(), Toast.LENGTH_LONG).show();
             } catch (UserDoesNotExistException u){
                 Toast.makeText(context,u.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+
         //instantiate custom adapter
-        ForeignWSListCustomAdapter adapter = new ForeignWSListCustomAdapter(list, this);
+        ForeignWSListCustomAdapter adapter = new ForeignWSListCustomAdapter(list, this, context);
 
         //handle listview and assign adapter
-        this.subList = (ListView)findViewById(R.id.sub_list);
-        this.subList.setAdapter(adapter);
+        this.foreignList = (ListView)findViewById(R.id.sub_list);
+        this.foreignList.setAdapter(adapter);
 
     }
 
