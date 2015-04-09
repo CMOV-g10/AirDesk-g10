@@ -8,14 +8,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.ForeignWSListCustomAdapter;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
 
 
 public class ForeignWSActivity extends ActionBarActivity {
@@ -37,6 +39,8 @@ public class ForeignWSActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ForeignWSActivity.this, SearchByTagsActivity.class);
+                intent.putExtra("NEW_WS", true);
+                intent.putExtra("WS_ID", 0);
                 startActivity(intent);
             }
         });
@@ -55,6 +59,14 @@ public class ForeignWSActivity extends ActionBarActivity {
         if (list.isEmpty()) {
            // context.getLoggedUser().setUsersubscriptions(context.getmDBHelper().getUserSubscriptions(context.getLoggedUser().getUserid()));
            // list = context.getLoggedUser().getUsersubscriptions();
+            try {
+                context.getLoggedUser().setUsersubscriptions(context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid()));
+                list = context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid());
+            } catch (WorkspaceDoesNotExistException w){
+                Toast.makeText(context, w.getMessage(), Toast.LENGTH_LONG).show();
+            } catch (UserDoesNotExistException u){
+                Toast.makeText(context,u.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }
         //instantiate custom adapter
         ForeignWSListCustomAdapter adapter = new ForeignWSListCustomAdapter(list, this);
