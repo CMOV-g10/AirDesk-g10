@@ -30,6 +30,7 @@ public class ConfigWSActivity extends ActionBarActivity {
     private Button editSubsBtn;
     private Button createBtn;
     private Button homeBtn;
+    private Button backBtn;
 
     private EditText nameTxt;
     private EditText quotaTxt;
@@ -53,6 +54,7 @@ public class ConfigWSActivity extends ActionBarActivity {
         this.editSubsBtn = (Button) findViewById(R.id.editSubs_btn);
         this.createBtn = (Button) findViewById(R.id.create_btn);
 
+        this.backBtn = (Button) findViewById(R.id.back_btn);
 
         this.homeBtn = (Button) findViewById(R.id.home_btn);
 
@@ -70,7 +72,13 @@ public class ConfigWSActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
-
+        this.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ConfigWSActivity.this, OwnedWSActivity.class);
+                startActivity(intent);
+            }
+        });
         this.createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

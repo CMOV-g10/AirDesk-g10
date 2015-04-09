@@ -10,19 +10,11 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".activities.LoginActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.LoginActivity" />
+            android:label="@string/app_name">
         </activity>
         <activity
             android:name=".activities.OwnedWSActivity"
-            android:label="@string/title_activity_owned_ws"
-            android:parentActivityName=".activities.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+            android:label="@string/title_activity_owned_ws">
         </activity>
         <activity
             android:name=".activities.LoginActivity"
@@ -35,35 +27,19 @@
         </activity>
         <activity
             android:name=".activities.ForeignWSActivity"
-            android:label="@string/title_activity_foreign_ws"
-            android:parentActivityName=".activities.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+            android:label="@string/title_activity_foreign_ws" >
         </activity>
         <activity
             android:name=".activities.ConfigWSActivity"
-            android:label="@string/title_activity_config_ws"
-            android:parentActivityName=".activities.OwnedWSActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.OwnedWSActivity" />
+            android:label="@string/title_activity_config_ws" >
         </activity>
         <activity
             android:name=".activities.SubscriptionListActivity"
-            android:label="@string/title_activity_subscription_list"
-            android:parentActivityName=".activities.ConfigWSActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.ConfigWSActivity" />
+            android:label="@string/title_activity_subscription_list">
         </activity>
         <activity
             android:name=".activities.SearchByTagsActivity"
-            android:label="@string/title_activity_search_by_tags"
-            android:parentActivityName=".activities.ForeignWSActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.ForeignWSActivity" />
+            android:label="@string/title_activity_search_by_tags">
         </activity>
         <activity
             android:name=".activities.FileListActivity"
@@ -71,27 +47,15 @@
         </activity>
         <activity
             android:name=".activities.EditFileActivity"
-            android:label="@string/title_activity_edit_file"
-            android:parentActivityName=".activities.FileListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.FileListActivity" />
+            android:label="@string/title_activity_edit_file" >
         </activity>
         <activity
             android:name=".activities.ReadFileActivity"
-            android:label="@string/title_activity_read_file"
-            android:parentActivityName=".activities.FileListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.FileListActivity" />
+            android:label="@string/title_activity_read_file">
         </activity>
         <activity
             android:name=".activities.RegisterActivity"
-            android:label="@string/title_activity_register"
-            android:parentActivityName=".activities.LoginActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="pt.ulisboa.tecnico.cmov.airdesk_g10.activities.LoginActivity" />
+            android:label="@string/title_activity_register">
         </activity>
     </application>
 
