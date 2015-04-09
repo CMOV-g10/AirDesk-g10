@@ -12,6 +12,7 @@ import java.util.Random;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserAlreadyExistsException;
@@ -720,10 +721,13 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     }
 
     public void changeWorkspaceData(Workspace workspace) {
+        int wid = workspace.getWsid();
+        Workspace tworkspace;
         try {
-            if(workspaceExists(workspace.getWsname(), workspace.getWsowner().getUsername()))
-                throw new WorkspaceAlreadyExistsException(workspace.getWsname());
-        } catch (UserDoesNotExistException u) {throw u;}
+            tworkspace = getWorkspace(wid);
+        } catch (AirDeskException e) {throw e;}
+        if(workspaceExists(workspace.getWsname(), workspace.getWsowner().getUsername()) && !(workspace.getWsname().equals(tworkspace.getWsname())))
+            throw new WorkspaceAlreadyExistsException(workspace.getWsname());
 
         SQLiteDatabase db = this.getWritableDatabase();
 
