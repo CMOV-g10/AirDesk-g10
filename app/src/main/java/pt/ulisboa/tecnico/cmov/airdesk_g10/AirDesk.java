@@ -11,6 +11,8 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskDbHelper;
  */
 public class AirDesk extends Application {
 
+    public final static int EDIT_SUBS_LIST = 10;
+
     private AirDeskDbHelper mDBHelper;
     private User loggedUser;
 

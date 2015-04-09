@@ -64,4 +64,14 @@ public class User {
     public void setUsersubscriptions(ArrayList<Workspace> usersubscriptions) {
         this.usersubscriptions = usersubscriptions;
     }
+
+    public void resetData(User user){
+        this.userid = user.getUserid();
+        this.username = user.getUsername();
+        this.userpassword = user.getUserpassword();
+
+        this.userworkspaces = user.getUserworkspaces();
+        this.usersubscriptions = user.getUsersubscriptions();
+    }
+
 }

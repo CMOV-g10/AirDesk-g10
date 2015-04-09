@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskDbHelper;
 
@@ -100,6 +101,12 @@ public class Workspace {
 
     public void setWstags(ArrayList<String> wstags) {
         this.wstags = wstags;
+    }
+
+    public void setWstags(String wstags) {
+        String delims = ",";
+        String[] tokens = wstags.split(delims);
+        this.wstags = new ArrayList<String>(Arrays.asList(tokens));
     }
 
     public void setWssubscription(ArrayList<User> wssubscription) {

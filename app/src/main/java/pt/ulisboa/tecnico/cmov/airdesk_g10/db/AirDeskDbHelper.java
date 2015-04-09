@@ -498,30 +498,23 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     }
 
     public boolean workspaceExists(String wname, String username){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String SqlWname= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
-        Cursor cwname = db.rawQuery(SqlWname, null);
-        cwname.moveToFirst();
+
         int uid;
         try {
             uid = this.getUserId(username);
-        }catch(UserDoesNotExistException u){cwname.close(); throw u;}
+        }catch(AirDeskException u){ throw u;}
 
         ArrayList<Workspace> wid=this.getUserWorkSpaces(uid);
 
-        while(!cwname.isAfterLast()){
-            int twid=cwname.getInt(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID));
-            String twname=cwname.getString(cwname.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME));
+
             for(Workspace w: wid){
-                if(w.getWsid()==twid&&twname.equals(wname)){
-                    cwname.close();
+                if(w.getWsname().equals(wname)){
+
                     return true;
                 }
-                cwname.moveToNext();
-            }
+
         }
-        //returns false if no such workspace exists
-        cwname.close();
+
         return false;
     }
 

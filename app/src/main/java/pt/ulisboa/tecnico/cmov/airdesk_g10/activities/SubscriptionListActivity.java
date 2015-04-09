@@ -1,21 +1,148 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.SubscriptionListCustomAdapter;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserAlreadyExistsException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
 
 
 public class SubscriptionListActivity extends ActionBarActivity {
+
+    private AirDesk context;
+
+    private boolean isNewWS;
+    private int wsID;
+
+    private Button homeBtn;
+    private Button addBtn;
+    private Button backBtn;
+
+    private TextView nameTxt;
+
+    private ListView subsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscription_list);
+
+        context = (AirDesk) getApplicationContext();
+
+        Intent intent = getIntent();
+
+        isNewWS = intent.getBooleanExtra("NEW_WS", true);
+        wsID = intent.getIntExtra("WS_ID", 0);
+
+        this.homeBtn = (Button) findViewById(R.id.home_btn);
+        this.addBtn = (Button) findViewById(R.id.add_btn);
+        this.backBtn = (Button) findViewById(R.id.back_btn);
+
+        this.nameTxt = (TextView) findViewById(R.id.name_txt);
+
+        this.subsList = (ListView) findViewById(R.id.subs_list);
+
+        this.homeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SubscriptionListActivity.this, MainActivity.class);
+                intent.putExtra("NEW_WS",isNewWS);
+                intent.putExtra("WS_ID", wsID);
+                startActivity(intent);
+            }
+        });
+
+        this.addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              String username = nameTxt.getText().toString();
+              User user;
+              try {
+                  user = context.getmDBHelper().searchUser(username);
+              } catch (UserDoesNotExistException u) {
+                  Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                  return;
+              }
+
+            try {
+                context.getmDBHelper().addSubscriberToWorkspace(wsID, user.getUserid());
+            } catch (UserDoesNotExistException u) {
+                Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            } catch (UserAlreadyExistsException u) {
+                Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            } catch (WorkspaceDoesNotExistException u) {
+                Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            }
+                ArrayList<User> list;
+            try {
+                list = context.getmDBHelper().getWorkspaceSubscribers(wsID);
+            } catch (WorkspaceDoesNotExistException u) {
+                Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            }
+                SubscriptionListCustomAdapter adapter = new SubscriptionListCustomAdapter(list, context );
+
+                //handle listview and assign adapter
+                subsList.setAdapter(adapter);
+         }
+        });
+
+        this.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        ArrayList<User> list = new ArrayList<User>();
+
+        if(!isNewWS) {
+            try {
+               list= context.getmDBHelper().getWorkspaceSubscribers(wsID);
+            } catch (WorkspaceDoesNotExistException u) {
+                Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
+        SubscriptionListCustomAdapter adapter = new SubscriptionListCustomAdapter(list, this);
+
+        //handle listview and assign adapter
+        this.subsList.setAdapter(adapter);
+
     }
 
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(SubscriptionListActivity.this, ConfigWSActivity.class);
+        intent.putExtra("NEW_WS",isNewWS);
+        intent.putExtra("WS_ID", wsID);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

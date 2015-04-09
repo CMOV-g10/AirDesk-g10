@@ -11,6 +11,7 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 
@@ -69,6 +70,8 @@ public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAd
 
                 }else{
                     int userId = list.get(position).getUserid();
+              //      ((AirDesk) context).getmDBHelper().removeSubscriberFromWorkspace()
+
 
                 }
                 notifyDataSetChanged();

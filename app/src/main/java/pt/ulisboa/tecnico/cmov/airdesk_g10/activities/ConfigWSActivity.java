@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,11 +11,16 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskDbHelper;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceAlreadyExistsException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
 
 
 public class ConfigWSActivity extends ActionBarActivity {
@@ -46,6 +52,8 @@ public class ConfigWSActivity extends ActionBarActivity {
 
         this.editSubsBtn = (Button) findViewById(R.id.editSubs_btn);
         this.createBtn = (Button) findViewById(R.id.create_btn);
+
+
         this.homeBtn = (Button) findViewById(R.id.home_btn);
 
         this.nameTxt = (EditText) findViewById(R.id.name_txt);
@@ -66,6 +74,67 @@ public class ConfigWSActivity extends ActionBarActivity {
         this.createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String username;
+                String wsname;
+                int quota;
+                boolean pub;
+                String tags;
+
+                if(nameTxt.getText().toString().equals("") ||
+                   quotaTxt.getText().toString().equals("")) {
+                    Toast.makeText(context, "Please fill name and quota.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                username = context.getLoggedUser().getUsername();
+                wsname = nameTxt.getText().toString();
+                quota = new Integer(quotaTxt.getText().toString());
+                pub = publicCb.isChecked();
+                tags = tagsTxt.getText().toString();
+
+                if(isNewWS){
+
+                    try {
+                        context.getmDBHelper().addWorkspace(username, wsname, pub, quota, tags);
+                    } catch (AirDeskException u){
+                        Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    Toast.makeText(context, "Workspace created with sucess.", Toast.LENGTH_LONG).show();
+
+
+                } else {
+
+                    Workspace ws;
+                    try {
+                        ws = context.getmDBHelper().getWorkspace(wsID);
+                    } catch (AirDeskException u) {
+                        Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+
+                    ws.setWsname(wsname);
+                    ws.setWsquota(quota);
+                    ws.setWspublic(pub);
+                    ws.setWstags(tags);
+
+                    try {
+                        context.getmDBHelper().changeWorkspaceData(ws);
+                    } catch (AirDeskException u) {
+                        Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    Toast.makeText(context, "Workspace changed with sucess.", Toast.LENGTH_LONG).show();
+
+                }
+
+                try {
+                    context.setLoggedUser(context.getmDBHelper().getUser(context.getLoggedUser().getUserid()));
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Intent intent = new Intent(ConfigWSActivity.this, OwnedWSActivity.class);
                 intent.putExtra("NEW_WS",isNewWS);
                 intent.putExtra("WS_ID", wsID);
@@ -83,23 +152,16 @@ public class ConfigWSActivity extends ActionBarActivity {
             }
         });
 
-
         if(!isNewWS){
             Workspace ws = context.getmDBHelper().getWorkspace(wsID);
             nameTxt.setText(ws.getWsname(),TextView.BufferType.EDITABLE);
-            quotaTxt.setText(ws.getWsquota(),TextView.BufferType.EDITABLE);
+            quotaTxt.setText(String.valueOf(ws.getWsquota()),TextView.BufferType.EDITABLE);
             tagsTxt.setText(ws.getWstags().toString(),TextView.BufferType.EDITABLE);
             publicCb.setChecked(ws.isWspublic());
-
-
-        } else{
-
-
-
+            createBtn.setText("EDIT",TextView.BufferType.EDITABLE);
         }
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

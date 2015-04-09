@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -15,7 +17,6 @@ public class EditFileActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_file);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

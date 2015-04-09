@@ -77,7 +77,7 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
                 intent.putExtra("NEW_WS", false);
                 intent.putExtra("WS_ID", list.get(position).getWsid());
                 context.startActivity(intent);
-                notifyDataSetChanged();
+               // notifyDataSetChanged();
             }
         });
 

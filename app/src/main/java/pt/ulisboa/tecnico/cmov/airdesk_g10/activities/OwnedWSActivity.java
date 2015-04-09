@@ -33,6 +33,7 @@ public class OwnedWSActivity extends ActionBarActivity {
         setContentView(R.layout.activity_owned_ws);
 
         context = (AirDesk) getApplicationContext();
+
         this.addWSBtn = (Button) findViewById(R.id.addWS_btn);
         this.addWSBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +56,6 @@ public class OwnedWSActivity extends ActionBarActivity {
         //generate WS list
         ArrayList<Workspace> list = context.getLoggedUser().getUserworkspaces();
         if (list.isEmpty()) {
-           // Toast.makeText(context,"tou bazia", Toast.LENGTH_LONG).show();
             try {
                 context.getLoggedUser().setUserworkspaces(context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid()));
                 list = context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid());
@@ -66,7 +66,6 @@ public class OwnedWSActivity extends ActionBarActivity {
             }
         }
 
-        //Toast.makeText(context,list.toString(), Toast.LENGTH_LONG).show();
         //instantiate custom adapter
         WSListCustomAdapter adapter = new WSListCustomAdapter(list, this);
 

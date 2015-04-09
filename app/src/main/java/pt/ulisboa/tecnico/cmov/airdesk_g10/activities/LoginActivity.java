@@ -106,38 +106,6 @@ public class LoginActivity extends ActionBarActivity {
 
     }
 
-    public boolean checkLogin(){
-
-        AirDesk context = (AirDesk) getApplicationContext();
-        SQLiteDatabase db = context.getmDBHelper().getReadableDatabase();
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-
-        String[] projection = {
-                AirDeskContract.UserEntry._ID,
-                AirDeskContract.UserEntry.COLUMN_USER_NAME,
-                AirDeskContract.UserEntry.COLUMN_USER_PASSWORD
-        };
-
-        // How you want the results sorted in the resulting Cursor
-
-        String Sql= "SELECT * FROM "+AirDeskContract.UserEntry.TABLE_NAME;
-        Cursor c = db.rawQuery(Sql, null);
-        String loginName = usernameTxt.getText().toString();
-        String loginPassword = passwordTxt.getText().toString();
-
-        c.moveToFirst();
-
-        while (!c.isAfterLast()){
-            String dbUserName = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
-            String dbUserPassword = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
-            if(dbUserName.equals(loginName) && dbUserPassword.equals(loginPassword))
-                return true;
-            c.moveToNext();
-        }
-        return false;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
