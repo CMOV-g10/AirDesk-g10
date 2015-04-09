@@ -72,8 +72,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     private static  final String SQL_CREATE_WHS_TABLE =
             "CREATE TABLE " + AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME + " (" +
                     AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
-                    AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID + TEXT_TYPE + COMMA_SEP +
-                    AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID + TEXT_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID + INTEGER_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID + INTEGER_TYPE + COMMA_SEP +
                     "FOREIGN KEY("+AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID+")"+ " REFERENCES "+
                     AirDeskContract.UserEntry.TABLE_NAME+"("+AirDeskContract.UserEntry.COLUMN_USER_ID+")"+COMMA_SEP+
                     "FOREIGN KEY("+AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID+")"+ " REFERENCES "+
@@ -83,8 +83,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     private static  final String SQL_CREATE_WHF_TABLE =
             "CREATE TABLE " + AirDeskContract.WorkspaceHasFileEntry.TABLE_NAME + " (" +
                     AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
-                    AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_FID + TEXT_TYPE + COMMA_SEP +
-                    AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_WSID + TEXT_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_FID + INTEGER_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_WSID + INTEGER_TYPE + COMMA_SEP +
                     "FOREIGN KEY("+AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_FID+")"+ " REFERENCES "+
                     AirDeskContract.FileEntry.TABLE_NAME+"("+AirDeskContract.FileEntry.COLUMN_FILE_ID+")"+COMMA_SEP+
                     "FOREIGN KEY("+AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_WSID+")"+ " REFERENCES "+
@@ -449,7 +449,28 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         throw new UserDoesNotExistException(username);
     }
 
+    public boolean userExists(int uid){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Sql= "SELECT * FROM "+AirDeskContract.UserEntry.TABLE_NAME;
 
+        Cursor c = db.rawQuery(Sql, null);
+
+        c.moveToFirst();
+
+        while (!c.isAfterLast()){
+            int dbUid = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
+
+            if(dbUid==uid) {
+                //if user exists return true
+                c.close();
+                return true;
+            }
+            c.moveToNext();
+        }
+        //returns false if no user with that username exists
+        c.close();
+        return false;
+    }
 
     public boolean userExists(String username){
         SQLiteDatabase db = this.getReadableDatabase();
@@ -517,7 +538,29 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
         return false;
     }
+    public boolean workspaceExists(int wid){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Sql= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
 
+        Cursor c = db.rawQuery(Sql, null);
+
+        c.moveToFirst();
+
+        while (!c.isAfterLast()){
+            int dbWid = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID));
+
+            if(dbWid==wid) {
+                //if user exists return true
+                c.close();
+                return true;
+            }
+            c.moveToNext();
+        }
+        //returns false if no user with that username exists
+        c.close();
+        return false;
+
+    }
     public boolean fileExists(String title,int wid) {
         ArrayList<File> filelist;
         try {
@@ -682,7 +725,6 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         }
     }
 
-
     public void addSubscriberToWorkspace(int wid, int uid) {
         User user;
         try{
@@ -734,6 +776,20 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         //db.rawQuery(sql, null);
         db.update(AirDeskContract.WorkspaceEntry.TABLE_NAME, values, AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID + " =" + workspace.getWsid(), null);
 
+    }
+
+    public boolean removeSubscriptionFromUser(int wid,int uid){
+        if(!workspaceExists(wid)){
+            throw new WorkspaceDoesNotExistException(wid);
+        }
+        if(!userExists(uid)){
+            throw new UserDoesNotExistException(uid);
+        }
+
+        SQLiteDatabase db= this.getWritableDatabase();
+        String whereclause = AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID + " = "+ wid +" and "+
+                            AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID+" = "+ uid;
+               return db.delete(AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME,whereclause,null)>0;
     }
 
     public int generator(){
