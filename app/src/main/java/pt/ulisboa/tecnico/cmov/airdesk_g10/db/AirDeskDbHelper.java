@@ -732,7 +732,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             uhwValues.put(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_WSID,getWorkspaceId(wname, getUserId(owner)));
             long newRowId2;
             newRowId2 = db.insert(
-                    AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME,
+                    AirDeskContract.WorkspaceHasFileEntry.TABLE_NAME,
                     null,
                     uhwValues);
             db.setTransactionSuccessful();
@@ -809,30 +809,34 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     }
 
     public boolean removeFile(int fid,int wid){
-       /* if(!fileExists(fid,wid)){
+        if(!fileExists(fid, wid)){
             throw new FileDoesNotExistException(fid);
         }
         if(!workspaceExists(wid)){
+            throw new WorkspaceDoesNotExistException(wid);
+        }
+        SQLiteDatabase db= this.getWritableDatabase();
 
-        }*/
-        return true;
+            String wcFE = AirDeskContract.FileEntry.COLUMN_FILE_ID+" = "+fid;
+
+            boolean d1=db.delete(AirDeskContract.FileEntry.TABLE_NAME,wcFE,null)>0;
+
+            return d1;
+
+
+
+
+
     }
 
     public boolean removeWorkspace(int wid){
-       /* if(!workspaceExists(wid)){
+        if(!workspaceExists(wid)){
             throw new WorkspaceDoesNotExistException(wid);
         }
         SQLiteDatabase db=this.getWritableDatabase();
-        db.beginTransaction();
-        try{
-            String wcWE;
-            String wcUHW;
-            String wc;
-            return true;
 
-        }
-        */
-        return true;
+            String wcWE=AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID+" = "+ wid;
+            return db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcWE,null)>0;
 
     }
 
