@@ -372,6 +372,37 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    public ArrayList<String> getWorkspaceTags(int wid){
+        Cursor cUHW;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String SqlUHW= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
+        ArrayList<String> tlist = new ArrayList<String>();
+        String wtags = new String();
+        String delims=",";
+        cUHW=db.rawQuery(SqlUHW,null);
+
+        try{
+            cUHW.moveToFirst();
+            while(!cUHW.isAfterLast()){
+                if(wid==cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID))){
+                    wtags=cUHW.getString(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_TAGS));
+                }
+                cUHW.moveToNext();
+            }
+            cUHW.close();
+            String[] temp=wtags.split(delims);
+            for(String s:temp){
+                tlist.add(s);}
+            return tlist;
+        } catch(WorkspaceDoesNotExistException w){
+            cUHW.close();
+            throw w;
+        } catch(UserDoesNotExistException u){
+            cUHW.close();
+            throw u;
+        }
+    }
+
 
 
     public User searchUser(String username){
