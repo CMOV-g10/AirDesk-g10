@@ -221,7 +221,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             c.moveToFirst();
             while(!c.isAfterLast()){
                 if(wid ==c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_WSID))){
-                    //files.add(this.getFile(c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_FID))));
+                    files.add(this.getFile(c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_FID))));
                 }
                 c.moveToNext();
             }
@@ -579,7 +579,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     }
 
     public boolean fileExists(int fid,int wid) {
-   /*     ArrayList<File> filelist;
+        ArrayList<File> filelist;
         try {
             filelist = getWorkspaceFiles(wid);
         } catch(FileDoesNotExistException f){
@@ -588,10 +588,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             throw w;
         }
         for (File f : filelist) {
-            if (true) {
+            if (f.getFileid()==fid) {
                 return true;
             }
-        }*/
+        }
         return false;
     }
 
@@ -807,10 +807,17 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                             AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID+" = "+ uid;
                return db.delete(AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME,whereclause,null)>0;
     }
+
     public boolean removeFile(int fid,int wid){
-       /* if(fileExists(fid,wid))*/
+       /* if(!fileExists(fid,wid)){
+            throw new FileDoesNotExistException(fid);
+        }
+        if(!workspaceExists(wid)){
+
+        }*/
         return true;
     }
+
     public boolean removeWorkspace(int wid){
        /* if(!workspaceExists(wid)){
             throw new WorkspaceDoesNotExistException(wid);
