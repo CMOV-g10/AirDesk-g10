@@ -460,6 +460,26 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     }
 
+    public void changeWorkspaceData(Workspace workspace) {
+        try {
+            if(workspaceExists(workspace.getWsname(), workspace.getWsowner().getUsername()))
+                throw new WorkspaceAlreadyExistsException(workspace.getWsname());
+        } catch (UserDoesNotExistException u) {throw u;}
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME, workspace.getWsname());
+        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC, workspace.isWspublic());
+        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_QUOTA, workspace.getWsquota());
+        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_TAGS, workspace.getWstags().toString());
+        //String sql = "UPDATE "+ AirDeskContract"COMPANY SET ADDRESS = 'Texas' WHERE ID = 6;"
+        //db.rawQuery(sql, null);
+        db.update(AirDeskContract.WorkspaceEntry.TABLE_NAME, values, AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID + " =" + workspace.getWsid(), null);
+
+    }
+
     public int generator(){
         Random r=new Random();
 
