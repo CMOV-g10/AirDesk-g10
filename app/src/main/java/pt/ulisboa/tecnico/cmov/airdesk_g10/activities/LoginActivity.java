@@ -90,28 +90,43 @@ public class LoginActivity extends ActionBarActivity {
         context.getmDBHelper().onUpgrade(context.getmDBHelper().getWritableDatabase(), context.getmDBHelper().DATABASE_VERSION, context.getmDBHelper().DATABASE_VERSION);
         try {
             this.context.getmDBHelper().addUser("p", "b");
-
-        } catch (UserAlreadyExistsException u) {
+        } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         try {
             this.context.getmDBHelper().addWorkspace("p", "CMOV", true, 50, "");
-        } catch (WorkspaceAlreadyExistsException u) {
-            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
-        } catch (UserAlreadyExistsException u) {
+        } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         try {
             this.context.getmDBHelper().addWorkspace("p", "AASMA", true, 50, "");
-        } catch (WorkspaceAlreadyExistsException u) {
-            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
-        } catch (UserAlreadyExistsException u) {
+        } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
-        // Toast.makeText(context, context.getmDBHelper().getUserWorkSpaces(context.getmDBHelper().getUserId("P")).toString(), Toast.LENGTH_LONG).show();
 
+        try {
+            this.context.getmDBHelper().addSubscriberToWorkspace(
+                    this.context.getmDBHelper().getWorkspaceId("CMOV", this.context.getmDBHelper().getUserId("p")),
+                        this.context.getmDBHelper().getUserId("p"));
+        } catch (AirDeskException u) {
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        try {
+            this.context.getmDBHelper().addSubscriberToWorkspace(
+                    this.context.getmDBHelper().getWorkspaceId("AASMA", this.context.getmDBHelper().getUserId("p")),
+                    this.context.getmDBHelper().getUserId("p"));
+        } catch (AirDeskException u) {
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        try {
+            this.context.getmDBHelper().addFile("p", "p", "CMOV", "AirDesk","READ ME");
+        } catch (AirDeskException u) {
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

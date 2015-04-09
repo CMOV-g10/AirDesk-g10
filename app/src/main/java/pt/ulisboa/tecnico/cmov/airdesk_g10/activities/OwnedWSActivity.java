@@ -26,6 +26,7 @@ public class OwnedWSActivity extends ActionBarActivity {
     private ListView wsList;
     private Button addWSBtn;
     private Button homeBtn;
+    private Button backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,14 @@ public class OwnedWSActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
-
+        this.backBtn = (Button) findViewById(R.id.back_btn);
+        this.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    Intent intent = new Intent(OwnedWSActivity.this, MainActivity.class);
+                    startActivity(intent);
+            }
+        });
         //generate WS list
         ArrayList<Workspace> list = context.getLoggedUser().getUserworkspaces();
         if (list.isEmpty()) {
