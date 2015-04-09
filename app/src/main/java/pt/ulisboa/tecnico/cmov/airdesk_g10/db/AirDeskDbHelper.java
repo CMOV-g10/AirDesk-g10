@@ -321,7 +321,34 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     }
 
+    public File getFile(int fid) {
+        try{
+            SQLiteDatabase db= this.getReadableDatabase();
 
+            String sql= "SELECT * FROM "+AirDeskContract.FileEntry.TABLE_NAME;
+            Cursor c = db.rawQuery(sql,null);
+            c.moveToFirst();
+            File f=null;
+            int cFid = -1;
+            String cFTitle, cContent;
+            while(!c.isAfterLast()){
+                cFid = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.FileEntry.COLUMN_FILE_ID));
+                if(cFid == fid) {
+                    cFTitle = c.getString(c.getColumnIndexOrThrow(AirDeskContract.FileEntry.COLUMN_FILE_TITLE));
+                    cContent = c.getString(c.getColumnIndexOrThrow(AirDeskContract.FileEntry.COLUMN_FILE_CONTENT));
+
+                    c.close();
+                    return new File(cFid,cFTitle,cContent, this.getWorkspace(this.getWorkspaceByFile(cFid)));
+
+                }
+                c.moveToNext();
+            }
+            c.close();
+            throw new FileDoesNotExistException(fid);}
+        catch(WorkspaceDoesNotExistException w){throw w;}
+        catch(FileDoesNotExistException f){throw f;}
+        catch(UserDoesNotExistException u){throw u;}
+    }
 
     public User getWorkspaceOwner(int wid) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -344,6 +371,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         c.close();
         return null;
     }
+
+
 
     public User searchUser(String username){
         SQLiteDatabase db= this.getReadableDatabase();
@@ -387,6 +416,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         c.close();
         throw new UserDoesNotExistException(username);
     }
+
+
 
     public boolean userExists(String username){
         SQLiteDatabase db = this.getReadableDatabase();
@@ -479,82 +510,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public void addFile(String owner, String client, String wname, String title, String content){
-        try {
-            if(!workspaceExists(wname,owner))
-                throw new WorkspaceDoesNotExistException(wname);
-        } catch (UserDoesNotExistException u) {throw u;}
 
-        int uid;
-        try {
-            uid = getUserId(client);
-        } catch (UserDoesNotExistException u) {throw u;}
-        try {
-            if(fileExists(title,getWorkspaceId(wname, getUserId(owner))))
-                throw new FileAlreadyExistsException(title);
-        } catch (UserDoesNotExistException u) {throw u;}
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        db.beginTransaction();
-        try {
-            int gen = generator();
-            // Create a new map of values, where column names are the keys
-            ContentValues values = new ContentValues();
-            values.put(AirDeskContract.FileEntry.COLUMN_FILE_ID, gen);
-            values.put(AirDeskContract.FileEntry.COLUMN_FILE_TITLE,title);
-            values.put(AirDeskContract.FileEntry.COLUMN_FILE_CONTENT,content);
-
-            // Insert the new row, returning the primary key value of the new row
-            long newRowId;
-            newRowId = db.insert(
-                    AirDeskContract.FileEntry.TABLE_NAME,
-                    null,
-                    values);
-
-
-            ContentValues uhwValues = new ContentValues();
-            uhwValues.put(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_ID, generator());
-            uhwValues.put(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_FID,gen);
-            uhwValues.put(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_WSID,getWorkspaceId(wname, getUserId(owner)));
-            long newRowId2;
-            newRowId2 = db.insert(
-                    AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME,
-                    null,
-                    uhwValues);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-    public File getFile(int fid) {
-        try{
-        SQLiteDatabase db= this.getReadableDatabase();
-
-        String sql= "SELECT * FROM "+AirDeskContract.FileEntry.TABLE_NAME;
-        Cursor c = db.rawQuery(sql,null);
-        c.moveToFirst();
-        File f=null;
-        int cFid = -1;
-        String cFTitle, cContent;
-        while(!c.isAfterLast()){
-            cFid = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.FileEntry.COLUMN_FILE_ID));
-            if(cFid == fid) {
-                cFTitle = c.getString(c.getColumnIndexOrThrow(AirDeskContract.FileEntry.COLUMN_FILE_TITLE));
-                cContent = c.getString(c.getColumnIndexOrThrow(AirDeskContract.FileEntry.COLUMN_FILE_CONTENT));
-
-                c.close();
-                return new File(cFid,cFTitle,cContent, this.getWorkspace(this.getWorkspaceByFile(cFid)));
-
-            }
-            c.moveToNext();
-        }
-        c.close();
-        throw new FileDoesNotExistException(fid);}
-        catch(WorkspaceDoesNotExistException w){throw w;}
-        catch(FileDoesNotExistException f){throw f;}
-        catch(UserDoesNotExistException u){throw u;}
-    }
 
     public int getWorkspaceByFile(int fid){
         SQLiteDatabase db= this.getReadableDatabase();
@@ -581,7 +537,6 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
 
     }
-
 
     public void addUser(String username, String password) {
 
@@ -654,10 +609,67 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     }
 
+    public void addFile(String owner, String client, String wname, String title, String content){
+        try {
+            if(!workspaceExists(wname,owner))
+                throw new WorkspaceDoesNotExistException(wname);
+        } catch (UserDoesNotExistException u) {throw u;}
+
+        int uid;
+        try {
+            uid = getUserId(client);
+        } catch (UserDoesNotExistException u) {throw u;}
+        try {
+            if(fileExists(title,getWorkspaceId(wname, getUserId(owner))))
+                throw new FileAlreadyExistsException(title);
+        } catch (UserDoesNotExistException u) {throw u;}
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.beginTransaction();
+        try {
+            int gen = generator();
+            // Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+            values.put(AirDeskContract.FileEntry.COLUMN_FILE_ID, gen);
+            values.put(AirDeskContract.FileEntry.COLUMN_FILE_TITLE,title);
+            values.put(AirDeskContract.FileEntry.COLUMN_FILE_CONTENT,content);
+
+            // Insert the new row, returning the primary key value of the new row
+            long newRowId;
+            newRowId = db.insert(
+                    AirDeskContract.FileEntry.TABLE_NAME,
+                    null,
+                    values);
+
+
+            ContentValues uhwValues = new ContentValues();
+            uhwValues.put(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_ID, generator());
+            uhwValues.put(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_FID,gen);
+            uhwValues.put(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_WSID,getWorkspaceId(wname, getUserId(owner)));
+            long newRowId2;
+            newRowId2 = db.insert(
+                    AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME,
+                    null,
+                    uhwValues);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+
     public void addSubscriberToWorkspace(int wid, int uid) {
         User user;
         try{
             user = getUser(uid);
+        } catch(UserDoesNotExistException u) {throw u;}
+        ArrayList<User> userList;
+        try{
+            userList = new ArrayList<User>(getWorkspaceSubscribers(wid));
+            for(User u: userList) {
+                if(u.getUsername().equals(user.getUsername()))
+                    throw new UserAlreadyExistsException(user.getUsername());
+            }
         } catch(UserDoesNotExistException u) {throw u;}
 
         SQLiteDatabase db = this.getWritableDatabase();
