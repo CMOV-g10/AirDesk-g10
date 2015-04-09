@@ -1,9 +1,6 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
-import android.app.Application;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -14,10 +11,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskContract;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskDbHelper;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceAlreadyExistsException;
@@ -45,8 +40,8 @@ public class LoginActivity extends ActionBarActivity {
                 String loginName = usernameTxt.getText().toString();
                 String loginPassword = passwordTxt.getText().toString();
 
-                if(context.getmDBHelper().userExists(loginName)) {
-                    if (context.getmDBHelper().userExists(loginName, loginPassword)){
+                if (context.getmDBHelper().userExists(loginName)) {
+                    if (context.getmDBHelper().userExists(loginName, loginPassword)) {
                         try {
                             context.setLoggedUser(context.getmDBHelper().searchUser(loginName));
                         } catch (UserDoesNotExistException u) {
@@ -67,8 +62,21 @@ public class LoginActivity extends ActionBarActivity {
         this.registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
+                String loginPassword = passwordTxt.getText().toString();
+                String loginName = usernameTxt.getText().toString();
+                if (!context.getmDBHelper().userExists(loginName)) {
+                    try {
+                        context.getmDBHelper().addUser(loginName, loginPassword);
+                    } catch (AirDeskException a) {
+                        Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
         this.usernameTxt = (EditText) findViewById(R.id.username_txt);
@@ -78,7 +86,7 @@ public class LoginActivity extends ActionBarActivity {
 
     }
 
-    public void populateDomain(){
+    public void populateDomain() {
         context.getmDBHelper().onUpgrade(context.getmDBHelper().getWritableDatabase(), context.getmDBHelper().DATABASE_VERSION, context.getmDBHelper().DATABASE_VERSION);
         try {
             this.context.getmDBHelper().addUser("p", "b");
@@ -87,22 +95,22 @@ public class LoginActivity extends ActionBarActivity {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
 
-        try{
+        try {
             this.context.getmDBHelper().addWorkspace("p", "CMOV", true, 50, "");
-        } catch (WorkspaceAlreadyExistsException u){
+        } catch (WorkspaceAlreadyExistsException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         } catch (UserAlreadyExistsException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
 
-        try{
+        try {
             this.context.getmDBHelper().addWorkspace("p", "AASMA", true, 50, "");
-        } catch (WorkspaceAlreadyExistsException u){
+        } catch (WorkspaceAlreadyExistsException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         } catch (UserAlreadyExistsException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
-       // Toast.makeText(context, context.getmDBHelper().getUserWorkSpaces(context.getmDBHelper().getUserId("P")).toString(), Toast.LENGTH_LONG).show();
+        // Toast.makeText(context, context.getmDBHelper().getUserWorkSpaces(context.getmDBHelper().getUserId("P")).toString(), Toast.LENGTH_LONG).show();
 
     }
 
