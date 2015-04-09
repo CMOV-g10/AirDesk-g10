@@ -323,13 +323,14 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     }
 
     public File getFile(int fid) {
+        Cursor c = null;
         try{
-            SQLiteDatabase db= this.getReadableDatabase();
+            SQLiteDatabase db = this.getReadableDatabase();
 
-            String sql= "SELECT * FROM "+AirDeskContract.FileEntry.TABLE_NAME;
-            Cursor c = db.rawQuery(sql,null);
+            String sql= "SELECT * FROM "+ AirDeskContract.FileEntry.TABLE_NAME;
+            c = db.rawQuery(sql,null);
             c.moveToFirst();
-            File f=null;
+            File f = null;
             int cFid = -1;
             String cFTitle, cContent;
             while(!c.isAfterLast()){
@@ -346,9 +347,9 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             }
             c.close();
             throw new FileDoesNotExistException(fid);}
-        catch(WorkspaceDoesNotExistException w){throw w;}
-        catch(FileDoesNotExistException f){throw f;}
-        catch(UserDoesNotExistException u){throw u;}
+        catch(WorkspaceDoesNotExistException w){c.close();throw w;}
+        catch(FileDoesNotExistException f){c.close();throw f;}
+        catch(UserDoesNotExistException u){c.close();throw u;}
     }
 
     public User getWorkspaceOwner(int wid) {
@@ -604,7 +605,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         c.moveToFirst();
 
         int wid=-1;
-        String cuname, cpass;
+
         while(!c.isAfterLast()){
             int cfid = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_FID));
             if(cfid == fid) {
@@ -617,8 +618,6 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         }
         c.close();
         throw new FileDoesNotExistException(fid);
-
-
 
     }
 
