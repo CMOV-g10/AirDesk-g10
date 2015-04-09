@@ -11,19 +11,21 @@
         android:paddingLeft="8dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_toLeftOf="@+id/leave_btn"
-        android:layout_toStartOf="@+id/leave_btn"
-        android:layout_alignTop="@+id/leave_btn"
-        android:layout_alignBottom="@+id/leave_btn" />
+        android:layout_toLeftOf="@+id/join_btn"
+        android:layout_toStartOf="@+id/join_btn"
+        android:layout_alignBottom="@+id/join_btn"
+        android:layout_alignTop="@+id/join_btn" />
 
-    <Button
-        android:id="@+id/leave_btn"
+    <ToggleButton
+        android:id="@+id/join_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
-        android:text="Leave" />
-
+        android:text="Join"
+        android:textOn="Leave"
+        android:textOff="Join"
+        android:checked="false" />
 
 </RelativeLayout>
