@@ -654,7 +654,27 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     }
 
+    public void addSubscriberToWorkspace(int wid, int uid) {
+        User user;
+        try{
+            user = getUser(uid);
+        } catch(UserDoesNotExistException u) {throw u;}
 
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_ID, generator());
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID, wid);
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID, uid);
+
+        // Insert the new row, returning the primary key value of the new row
+        long newRowId;
+        newRowId = db.insert(
+                AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME,
+                null,
+                values);
+    }
 
     public void changeWorkspaceData(Workspace workspace) {
         try {
