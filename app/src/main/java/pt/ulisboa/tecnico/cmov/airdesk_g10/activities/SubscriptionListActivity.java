@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.SubscriptionListCustomAdapte
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
@@ -42,6 +43,8 @@ public class SubscriptionListActivity extends ActionBarActivity {
 
     private ListView subsList;
 
+    private Context myContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,7 @@ public class SubscriptionListActivity extends ActionBarActivity {
         context = (AirDesk) getApplicationContext();
 
         Intent intent = getIntent();
+        myContext = this;
 
         isNewWS = intent.getBooleanExtra("NEW_WS", true);
         wsID = intent.getIntExtra("WS_ID", 0);
@@ -79,31 +83,26 @@ public class SubscriptionListActivity extends ActionBarActivity {
               User user;
               try {
                   user = context.getmDBHelper().searchUser(username);
-              } catch (UserDoesNotExistException u) {
+              } catch (AirDeskException u) {
                   Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                   return;
               }
 
             try {
                 context.getmDBHelper().addSubscriberToWorkspace(wsID, user.getUserid());
-            } catch (UserDoesNotExistException u) {
-                Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
-                return;
-            } catch (UserAlreadyExistsException u) {
-                Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
-                return;
-            } catch (WorkspaceDoesNotExistException u) {
+            } catch (AirDeskException u) {
                 Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                 return;
             }
                 ArrayList<User> list;
             try {
                 list = context.getmDBHelper().getWorkspaceSubscribers(wsID);
-            } catch (WorkspaceDoesNotExistException u) {
+            } catch (AirDeskException u) {
                 Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                 return;
             }
-                SubscriptionListCustomAdapter adapter = new SubscriptionListCustomAdapter(list, context );
+
+                SubscriptionListCustomAdapter adapter = new SubscriptionListCustomAdapter(list, myContext, context);
 
                 //handle listview and assign adapter
                 subsList.setAdapter(adapter);
@@ -128,7 +127,7 @@ public class SubscriptionListActivity extends ActionBarActivity {
             }
         }
 
-        SubscriptionListCustomAdapter adapter = new SubscriptionListCustomAdapter(list, this);
+        SubscriptionListCustomAdapter adapter = new SubscriptionListCustomAdapter(list, myContext, context);
 
         //handle listview and assign adapter
         this.subsList.setAdapter(adapter);

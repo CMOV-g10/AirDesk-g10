@@ -79,7 +79,7 @@ public class FileListActivity extends ActionBarActivity {
         ArrayList<File> list = context.getmDBHelper().getWorkspaceFiles(wsID);
 
         //instantiate custom adapter
-        FileListCustomAdapter adapter = new FileListCustomAdapter(list, this);
+        FileListCustomAdapter adapter = new FileListCustomAdapter(list, this, context);
 
         //handle listview and assign adapter
         this.fileList = (ListView)findViewById(R.id.file_lst);

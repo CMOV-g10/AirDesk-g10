@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.ConfigWSActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileListActivity;
@@ -26,10 +27,12 @@ public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
 
     private ArrayList<File> list = new ArrayList<File>();
     private Context context;
+    private AirDesk airDesk;
 
-    public FileListCustomAdapter(ArrayList<File> list, Context context) {
+    public FileListCustomAdapter(ArrayList<File> list, Context context, AirDesk airDesk) {
         this.list = list;
         this.context = context;
+        this.airDesk = airDesk;
     }
 
     @Override

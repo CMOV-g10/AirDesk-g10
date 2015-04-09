@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -67,12 +68,23 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
             @Override
             public void onClick(View v) {
                 int wid = list.get(position).getWsid();
-                int uid = list.get(position).getWsowner().getUserid();
+                int uid = airDesk.getLoggedUser().getUserid();
                 try {
-                    if (airDesk.getmDBHelper().removeSubscriptionFromUser(wid, uid))
-                        list.remove(position); //or some other task
-                } catch(AirDeskException a) {a.getMessage();}
-                //notifyDataSetChanged();
+                   airDesk.getmDBHelper().removeSubscriptionFromUser(wid, uid);
+                } catch(AirDeskException a) {
+                    Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                try {
+                    airDesk.setLoggedUser(airDesk.getmDBHelper().getUser(airDesk.getLoggedUser().getUserid()));
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                list.remove(position); //or some other task
+                notifyDataSetChanged();
             }
         });
 

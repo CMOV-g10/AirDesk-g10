@@ -62,20 +62,10 @@ public class OwnedWSActivity extends ActionBarActivity {
             }
         });
         //generate WS list
-        ArrayList<Workspace> list = context.getLoggedUser().getUserworkspaces();
-        if (list.isEmpty()) {
-            try {
-                context.getLoggedUser().setUserworkspaces(context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid()));
-                list = context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid());
-            } catch (WorkspaceDoesNotExistException w){
-                Toast.makeText(context,w.getMessage(), Toast.LENGTH_LONG).show();
-            } catch (UserDoesNotExistException u){
-                Toast.makeText(context,u.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        }
+        ArrayList<Workspace> list = context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid());
 
         //instantiate custom adapter
-        WSListCustomAdapter adapter = new WSListCustomAdapter(list, this);
+        WSListCustomAdapter adapter = new WSListCustomAdapter(list, this, context);
 
         //handle listview and assign adapter
         this.wsList = (ListView)findViewById(R.id.ws_list);

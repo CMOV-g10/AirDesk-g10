@@ -21,10 +21,12 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAdapter {
     private ArrayList<User> list = new ArrayList<User>();
     private Context context;
+    private AirDesk airDesk;
 
-    public SubscriptionListCustomAdapter(ArrayList<User> list, Context context) {
+    public SubscriptionListCustomAdapter(ArrayList<User> list, Context context, AirDesk airDesk) {
         this.list = list;
         this.context = context;
+        this.airDesk = airDesk;
     }
 
     @Override
@@ -70,7 +72,6 @@ public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAd
 
                 }else{
                     int userId = list.get(position).getUserid();
-              //      ((AirDesk) context).getmDBHelper().removeSubscriberFromWorkspace()
 
 
                 }

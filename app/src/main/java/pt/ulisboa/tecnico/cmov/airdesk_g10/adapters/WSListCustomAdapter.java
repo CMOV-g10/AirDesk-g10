@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.ConfigWSActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileListActivity;
@@ -24,10 +25,12 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
 
     private ArrayList<Workspace> list = new ArrayList<Workspace>();
     private Context context;
+    private AirDesk airDesk;
 
-    public WSListCustomAdapter(ArrayList<Workspace> list, Context context) {
+    public WSListCustomAdapter(ArrayList<Workspace> list, Context context, AirDesk airDesk) {
         this.list = list;
         this.context = context;
+        this.airDesk = airDesk;
     }
 
     @Override

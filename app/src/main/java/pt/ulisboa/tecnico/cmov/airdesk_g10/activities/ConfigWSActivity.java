@@ -137,12 +137,7 @@ public class ConfigWSActivity extends ActionBarActivity {
 
                 }
 
-                try {
-                    context.setLoggedUser(context.getmDBHelper().getUser(context.getLoggedUser().getUserid()));
-                } catch (AirDeskException u){
-                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
-                    return;
-                }
+
                 Intent intent = new Intent(ConfigWSActivity.this, OwnedWSActivity.class);
                 intent.putExtra("NEW_WS",isNewWS);
                 intent.putExtra("WS_ID", wsID);
