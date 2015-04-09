@@ -15,17 +15,19 @@ import java.util.ArrayList;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.ConfigWSActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileListActivity;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 
 /**
- * Created by Pedro on 4/6/2015.
+ * Created by luis on 4/9/15.
  */
-public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
+public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
 
-    private ArrayList<Workspace> list = new ArrayList<Workspace>();
+
+    private ArrayList<File> list = new ArrayList<File>();
     private Context context;
 
-    public WSListCustomAdapter(ArrayList<Workspace> list, Context context) {
+    public FileListCustomAdapter(ArrayList<File> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -52,19 +54,16 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
         View view = convertView;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.ws_list_item, null);
+            view = inflater.inflate(R.layout.file_list_item, null);
         }
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.get(position).getWsname());
+        listItemText.setText(list.get(position).getFiletitle());
         listItemText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, FileListActivity.class);
-                intent.putExtra("OWNED", true);
-                intent.putExtra("WS_ID", list.get(position).getWsid());
-                context.startActivity(intent);
+
             }
         });
 
@@ -83,13 +82,11 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
         editBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ConfigWSActivity.class);
-                intent.putExtra("NEW_WS", false);
-                intent.putExtra("WS_ID", list.get(position).getWsid());
-                context.startActivity(intent);
+
             }
         });
 
         return view;
     }
+
 }

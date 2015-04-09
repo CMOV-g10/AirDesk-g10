@@ -11,16 +11,16 @@
         android:layout_height="wrap_content"
         android:text="Edit Subs"
         android:id="@+id/editSubs_btn"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_above="@+id/home_btn"
+        android:layout_alignLeft="@+id/home_btn"
+        android:layout_alignStart="@+id/home_btn" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create"
         android:id="@+id/create_btn"
-        android:layout_alignTop="@+id/editSubs_btn"
+        android:layout_below="@+id/editSubs_btn"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -90,11 +90,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/name_txt"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/editSubs_btn"
-        android:layout_toStartOf="@+id/home_btn"
         android:inputType="text"
         android:layout_alignRight="@+id/create_btn"
-        android:layout_alignEnd="@+id/create_btn" />
+        android:layout_alignEnd="@+id/create_btn"
+        android:layout_toRightOf="@+id/back_btn"
+        android:layout_toEndOf="@+id/back_btn" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -118,5 +118,14 @@
         android:layout_alignEnd="@+id/name_txt"
         android:layout_alignLeft="@+id/public_cb"
         android:layout_alignStart="@+id/public_cb" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:id="@+id/back_btn"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
