@@ -17,7 +17,7 @@ public class MainActivity extends ActionBarActivity {
     private AirDesk context;
     private Button ownedWSBtn;
     private Button foreignWSBtn;
-
+    private Button logoutBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +37,15 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ForeignWSActivity.class);
+                startActivity(intent);
+            }
+        });
+        this.logoutBtn = (Button) findViewById(R.id.logout_btn);
+        this.logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.setLoggedUser(null);
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
