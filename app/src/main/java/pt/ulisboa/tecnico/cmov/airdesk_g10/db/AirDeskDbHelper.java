@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Subscription;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserWorkspaces;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceSubscriptions;
@@ -151,20 +150,12 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public UserWorkspaces getUserWorkSpaces(int uid){
+    public ArrayList<Workspace> getUserWorkSpaces(int uid){
         Cursor cUHW;
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlUHW= "SELECT * FROM "+AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME;
         ArrayList<Workspace> wid=new ArrayList<Workspace>();
         cUHW=db.rawQuery(SqlUHW,null);
-
-        User u;
-
-        try{
-            u= getUser(uid);
-        } catch (AirDeskException w){
-            throw w;
-        }
 
         try{
             cUHW.moveToFirst();
@@ -175,10 +166,13 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                 cUHW.moveToNext();
             }
             cUHW.close();
-            return new UserWorkspaces(u, wid);
-        } catch(AirDeskException w){
+            return wid;
+        } catch(WorkspaceDoesNotExistException w){
              cUHW.close();
             throw w;
+        } catch(UserDoesNotExistException u){
+             cUHW.close();
+            throw u;
         }
     }
 
@@ -305,21 +299,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             throw u;
         }
     }
-    public boolean isSubscribed(int uid,int wid){
-        WorkspaceSubscriptions ws;
-        try {
-            ws = getWorkspaceSubscribers(wid);
-        } catch (AirDeskException u){throw u;}
 
-        ArrayList<User> list = ws.getSubscriptions();
-        for(User u:list){
-            if(u.getUserid()==uid){
-                return true;
-            }
-        }
-        return false;
-
-    }
     public ArrayList<Workspace> getWorkspaceByTags(String tag){
         SQLiteDatabase db= this.getReadableDatabase();
         String query= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
@@ -431,8 +411,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     public int getWorkspaceId(String wsname,int ownerID) {
 
-        UserWorkspaces wlist= this.getUserWorkSpaces(ownerID);
-        for(Workspace w:wlist.getWorkspaces()){
+        ArrayList<Workspace> wlist= new ArrayList<>(this.getUserWorkSpaces(ownerID));
+        for(Workspace w:wlist){
             if(w.getWsname().equals(wsname)){
                 return w.getWsid();}
         }
@@ -695,10 +675,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             uid = this.getUserId(username);
         }catch(AirDeskException u){ throw u;}
 
-        UserWorkspaces wid=this.getUserWorkSpaces(uid);
+        ArrayList<Workspace> wid=this.getUserWorkSpaces(uid);
 
 
-            for(Workspace w: wid.getWorkspaces()){
+            for(Workspace w: wid){
                 if(w.getWsname().equals(wname)){
 
                     return true;
@@ -976,6 +956,47 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     }
 
+    public void changeFileData(File file) {
+        int fid = file.getFileid();
+        File f;
+        try {
+            f = getFile(fid);
+        } catch (AirDeskException e) {throw e;}
+        if(fileExists(file.getFileid(), file.getFileworkspace().getWsid()) && !(file.getFiletitle().equals(f.getFiletitle())))
+            throw new FileAlreadyExistsException(file.getFiletitle());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(AirDeskContract.FileEntry.COLUMN_FILE_TITLE, file.getFiletitle());
+        values.put(AirDeskContract.FileEntry.COLUMN_FILE_CONTENT, file.getFilecontent());
+
+        db.update(AirDeskContract.FileEntry.TABLE_NAME, values, AirDeskContract.FileEntry.COLUMN_FILE_ID + " =" + file.getFileid(), null);
+    }
+
+    public void changeSubscriptionData(Subscription subscription) {
+        int wid = subscription.getWorkspace().getWsid();
+        int uid = subscription.getUser().getUserid();
+
+        Subscription s;
+        try {
+            s = getSubscription(wid, uid);
+        } catch (AirDeskException e) {throw e;}
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_READ_PERM, subscription.isReadPermission());
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WRITE_PERM, subscription.isWritePermission());
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_CREATE_PERM, subscription.isCreatePermission());
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_DELETE_PERM, subscription.isDeletePermission());
+
+        db.update(AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME, values, AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID + " =" + subscription.getWorkspace().getWsid()
+                + " AND " + AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID + " ="  + subscription.getUser().getUserid(), null);
+    }
+
     public boolean removeSubscriptionFromUser(int wid,int uid){
         if(!workspaceExists(wid)){
             throw new WorkspaceDoesNotExistException(wid);
@@ -999,15 +1020,11 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         }
         SQLiteDatabase db= this.getWritableDatabase();
 
-            String wcFE = AirDeskContract.FileEntry.COLUMN_FILE_ID+" = "+fid;
+            String wcFE = AirDeskContract.FileEntry.COLUMN_FILE_ID + " = " + fid;
 
             boolean d1=db.delete(AirDeskContract.FileEntry.TABLE_NAME,wcFE,null)>0;
-
-            return d1;
-
-
-
-
+            boolean d2=db.delete(AirDeskContract.WorkspaceHasFileEntry.TABLE_NAME, wcFE, null)>0;
+            return d1&&d2;
 
     }
 
