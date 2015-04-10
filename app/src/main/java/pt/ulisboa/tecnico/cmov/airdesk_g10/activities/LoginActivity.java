@@ -13,9 +13,7 @@ import android.widget.Toast;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceAlreadyExistsException;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -58,29 +56,15 @@ public class LoginActivity extends ActionBarActivity {
 
             }
         });
-        this.registerBtn = (Button) findViewById(R.id.register_btn);
+        this.registerBtn = (Button) findViewById(R.id.registerlaunch_btn);
         this.registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String loginPassword = passwordTxt.getText().toString();
-                String loginName = usernameTxt.getText().toString();
-                if (!context.getmDBHelper().userExists(loginName)) {
-                    try {
-                        //CHANGE NICKNAME HERE
-                        context.getmDBHelper().addUser(loginName, loginPassword, loginName);
-                    } catch (AirDeskException a) {
-                        Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                     startActivity(intent);
-                } else {
-                    Toast.makeText(context, "User already exists.", Toast.LENGTH_LONG).show();
-                }
-
-            }
+                   }
         });
-        this.usernameTxt = (EditText) findViewById(R.id.username_txt);
+        this.usernameTxt = (EditText) findViewById(R.id.nickname_txt);
         this.passwordTxt = (EditText) findViewById(R.id.password_txt);
 
         populateDomain();

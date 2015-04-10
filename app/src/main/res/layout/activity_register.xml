@@ -7,16 +7,29 @@
     tools:context="pt.ulisboa.tecnico.cmov.airdesk_g10.activities.RegisterActivity">
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/username_txt"
-        android:hint="Choose Username"
-        android:layout_marginTop="170dp"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/email_txt"
+        android:layout_above="@+id/password_txt"
+        android:layout_alignLeft="@+id/nickname_txt"
+        android:layout_alignStart="@+id/nickname_txt"
+        android:layout_marginBottom="42dp"
+        android:hint="Your email" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nickname_txt"
+        android:hint="Choose Nickname"
         android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/password_txt"
         android:layout_alignStart="@+id/password_txt"
+        android:layout_marginRight="70dp"
+        android:layout_marginTop="100dp"
         android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp" />
+        android:layout_below="@+id/register_btn"
+        android:layout_alignLeft="@+id/password_txt" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -25,7 +38,7 @@
         android:ems="10"
         android:id="@+id/password_txt"
         android:hint="Choose Password"
-        android:layout_below="@+id/username_txt"
+        android:layout_below="@+id/nickname_txt"
         android:layout_centerHorizontal="true" />
 
     <EditText
@@ -36,8 +49,8 @@
         android:id="@+id/passwordConfirmation_txt"
         android:hint="Confirm Password"
         android:layout_below="@+id/password_txt"
-        android:layout_alignLeft="@+id/username_txt"
-        android:layout_alignStart="@+id/username_txt"
+        android:layout_alignLeft="@+id/nickname_txt"
+        android:layout_alignStart="@+id/nickname_txt"
         android:layout_marginTop="47dp" />
 
     <Button

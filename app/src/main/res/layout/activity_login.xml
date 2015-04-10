@@ -11,10 +11,10 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/username_txt"
+        android:id="@+id/nickname_txt"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:hint="Username" />
+        android:hint="email" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -23,9 +23,9 @@
         android:ems="10"
         android:id="@+id/password_txt"
         android:hint="Password"
-        android:layout_below="@+id/username_txt"
-        android:layout_alignLeft="@+id/username_txt"
-        android:layout_alignStart="@+id/username_txt"
+        android:layout_below="@+id/nickname_txt"
+        android:layout_alignLeft="@+id/nickname_txt"
+        android:layout_alignStart="@+id/nickname_txt"
         android:layout_marginTop="39dp" />
 
     <Button
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:id="@+id/register_btn"
+        android:id="@+id/registerlaunch_btn"
         android:layout_alignTop="@+id/login_btn"
         android:layout_alignLeft="@+id/password_txt"
         android:layout_alignStart="@+id/password_txt" />
