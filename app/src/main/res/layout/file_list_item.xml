@@ -17,7 +17,7 @@
         android:layout_alignTop="@+id/edit_btn" />
 
     <Button
-        android:id="@+id/delete_btn"
+        android:id="@+id/delete_cb"
         android:layout_width="75dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -30,8 +30,8 @@
         android:layout_width="75dp"
         android:layout_height="wrap_content"
         android:text="Edit"
-        android:layout_alignTop="@+id/delete_btn"
-        android:layout_toLeftOf="@+id/delete_btn" />
+        android:layout_alignTop="@+id/delete_cb"
+        android:layout_toLeftOf="@+id/delete_cb" />
 
     <Button
         android:id="@+id/read_btn"

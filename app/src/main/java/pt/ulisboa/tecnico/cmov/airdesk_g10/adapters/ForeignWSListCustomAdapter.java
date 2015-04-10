@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileListActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
@@ -61,6 +63,16 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
         listItemText.setText(list.getSubscriptions().get(position).getWorkspace().getWsname());
+
+        listItemText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, FileListActivity.class);
+                intent.putExtra("OWNED", false);
+                intent.putExtra("WS_ID", list.getSubscriptions().get(position).getWorkspace().getWsid());
+                context.startActivity(intent);
+            }
+        });
 
         //Handle buttons and add onClickListeners
         final Button leaveBtn = (Button) view.findViewById(R.id.leave_btn);

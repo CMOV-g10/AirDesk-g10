@@ -14,11 +14,11 @@
         </activity>
         <activity
             android:name=".activities.OwnedWSActivity"
-            android:label="@string/title_activity_owned_ws" >
+            android:label="Owned Workspaces" >
         </activity>
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:label="Login" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,39 +27,35 @@
         </activity>
         <activity
             android:name=".activities.ForeignWSActivity"
-            android:label="@string/title_activity_foreign_ws" >
+            android:label="Subscribed Workspaces" >
         </activity>
         <activity
             android:name=".activities.ConfigWSActivity"
-            android:label="@string/title_activity_config_ws" >
+            android:label="Edit Workspace" >
         </activity>
         <activity
             android:name=".activities.SubscriptionListActivity"
-            android:label="@string/title_activity_subscription_list" >
+            android:label="Subscription List" >
         </activity>
         <activity
             android:name=".activities.SearchByTagsActivity"
-            android:label="@string/title_activity_search_by_tags" >
+            android:label="Search Workspaces by Tag" >
         </activity>
         <activity
             android:name=".activities.FileListActivity"
-            android:label="@string/title_activity_file_list" >
+            android:label="Workspace File List" >
         </activity>
         <activity
             android:name=".activities.FileActivity"
-            android:label="@string/title_activity_edit_file" >
-        </activity>
-        <activity
-            android:name=".activities.ReadFileActivity"
-            android:label="@string/title_activity_read_file" >
+            android:label="File" >
         </activity>
         <activity
             android:name=".activities.RegisterActivity"
-            android:label="@string/title_activity_register" >
+            android:label="Register User" >
         </activity>
         <activity
             android:name=".activities.UserPermissionsActivity"
-            android:label="@string/title_activity_user_permissions" >
+            android:label="Workspace Permissions" >
         </activity>
     </application>
 

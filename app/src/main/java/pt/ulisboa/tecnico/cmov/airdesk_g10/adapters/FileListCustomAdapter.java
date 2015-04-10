@@ -72,7 +72,7 @@ public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
         });
 
         //Handle buttons and add onClickListeners
-        Button deleteBtn = (Button)view.findViewById(R.id.delete_btn);
+        Button deleteBtn = (Button)view.findViewById(R.id.delete_cb);
         Button editBtn = (Button)view.findViewById(R.id.edit_btn);
         Button readBtn = (Button) view.findViewById(R.id.read_btn);
 

@@ -114,7 +114,6 @@ public class ConfigWSActivity extends ActionBarActivity {
                 if(isNewWS){
 
                     try {
-                        //CHANGE PERMISSIONS HERE
                         context.getmDBHelper().addWorkspace(username, wsname, pub, quota, tags, readP, writeP, createP, deleteP);
                     } catch (AirDeskException u){
                         Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();

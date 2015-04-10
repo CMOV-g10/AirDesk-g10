@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Subscription;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserWorkspaces;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceSubscriptions;
@@ -150,12 +151,20 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public ArrayList<Workspace> getUserWorkSpaces(int uid){
+    public UserWorkspaces getUserWorkSpaces(int uid){
         Cursor cUHW;
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlUHW= "SELECT * FROM "+AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME;
         ArrayList<Workspace> wid=new ArrayList<Workspace>();
         cUHW=db.rawQuery(SqlUHW,null);
+
+        User u;
+
+        try{
+            u= getUser(uid);
+        } catch (AirDeskException w){
+            throw w;
+        }
 
         try{
             cUHW.moveToFirst();
@@ -166,13 +175,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                 cUHW.moveToNext();
             }
             cUHW.close();
-            return wid;
-        } catch(WorkspaceDoesNotExistException w){
+            return new UserWorkspaces(u, wid);
+        } catch(AirDeskException w){
              cUHW.close();
             throw w;
-        } catch(UserDoesNotExistException u){
-             cUHW.close();
-            throw u;
         }
     }
 
@@ -425,8 +431,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     public int getWorkspaceId(String wsname,int ownerID) {
 
-        ArrayList<Workspace> wlist= new ArrayList<>(this.getUserWorkSpaces(ownerID));
-        for(Workspace w:wlist){
+        UserWorkspaces wlist= this.getUserWorkSpaces(ownerID);
+        for(Workspace w:wlist.getWorkspaces()){
             if(w.getWsname().equals(wsname)){
                 return w.getWsid();}
         }
@@ -689,10 +695,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             uid = this.getUserId(username);
         }catch(AirDeskException u){ throw u;}
 
-        ArrayList<Workspace> wid=this.getUserWorkSpaces(uid);
+        UserWorkspaces wid=this.getUserWorkSpaces(uid);
 
 
-            for(Workspace w: wid){
+            for(Workspace w: wid.getWorkspaces()){
                 if(w.getWsname().equals(wname)){
 
                     return true;

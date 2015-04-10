@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -16,18 +17,20 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.ConfigWSActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileListActivity;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserWorkspaces;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 /**
  * Created by Pedro on 4/6/2015.
  */
 public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
 
-    private ArrayList<Workspace> list = new ArrayList<Workspace>();
+    private UserWorkspaces list;
     private Context context;
     private AirDesk airDesk;
 
-    public WSListCustomAdapter(ArrayList<Workspace> list, Context context, AirDesk airDesk) {
+    public WSListCustomAdapter(UserWorkspaces list, Context context, AirDesk airDesk) {
         this.list = list;
         this.context = context;
         this.airDesk = airDesk;
@@ -35,12 +38,12 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
 
     @Override
     public int getCount() {
-        return list.size();
+        return list.getWorkspaces().size();
     }
 
     @Override
     public Object getItem(int pos) {
-        return list.get(pos);
+        return list.getWorkspaces().get(pos);
     }
 
     @Override
@@ -60,26 +63,32 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.get(position).getWsname());
+        listItemText.setText(list.getWorkspaces().get(position).getWsname());
         listItemText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, FileListActivity.class);
                 intent.putExtra("OWNED", true);
-                intent.putExtra("WS_ID", list.get(position).getWsid());
+                intent.putExtra("WS_ID", list.getWorkspaces().get(position).getWsid());
                 context.startActivity(intent);
             }
         });
 
         //Handle buttons and add onClickListeners
-        Button deleteBtn = (Button)view.findViewById(R.id.delete_btn);
+        Button deleteBtn = (Button)view.findViewById(R.id.delete_cb);
         Button editBtn = (Button)view.findViewById(R.id.edit_btn);
 
         deleteBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //do something
-                list.remove(position); //or some other task
+
+                try {
+                    airDesk.getmDBHelper().removeWorkspace(list.getWorkspaces().get(position).getWsid());
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(context, "Workspace deleted with sucess.", Toast.LENGTH_LONG).show();
                 notifyDataSetChanged();
             }
         });
@@ -88,7 +97,7 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
             public void onClick(View v) {
                 Intent intent = new Intent(context, ConfigWSActivity.class);
                 intent.putExtra("NEW_WS", false);
-                intent.putExtra("WS_ID", list.get(position).getWsid());
+                intent.putExtra("WS_ID", list.getWorkspaces().get(position).getWsid());
                 context.startActivity(intent);
             }
         });

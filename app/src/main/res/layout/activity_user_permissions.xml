@@ -6,7 +6,118 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="pt.ulisboa.tecnico.cmov.airdesk_g10.activities.UserPermissionsActivity">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Subscriber Permissions"
+        android:id="@+id/perm_txtv"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Read"
+        android:id="@+id/read_txtv"
+        android:layout_below="@+id/perm_txtv"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="36dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Write"
+        android:id="@+id/write_txtv"
+        android:layout_alignTop="@+id/read_txtv"
+        android:layout_alignRight="@+id/perm_txtv"
+        android:layout_alignEnd="@+id/perm_txtv" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Create"
+        android:id="@+id/create_txtv"
+        android:layout_marginTop="42dp"
+        android:layout_below="@+id/read_txtv"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Delete"
+        android:id="@+id/delete_txtv"
+        android:layout_alignTop="@+id/create_txtv"
+        android:layout_alignRight="@+id/write_txtv"
+        android:layout_alignEnd="@+id/write_txtv" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/read_cb"
+        android:checked="false"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_alignTop="@+id/read_txtv"
+        android:layout_toRightOf="@+id/create_txtv"
+        android:layout_toEndOf="@+id/create_txtv" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/create_btn"
+        android:checked="false"
+        android:layout_alignTop="@+id/create_txtv"
+        android:layout_alignLeft="@+id/read_cb"
+        android:layout_alignStart="@+id/read_cb" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/write_cb"
+        android:checked="false"
+        android:layout_alignTop="@+id/write_txtv"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/delete_cb"
+        android:checked="false"
+        android:layout_alignTop="@+id/delete_txtv"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:id="@+id/back_btn"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home"
+        android:id="@+id/home_btn"
+        android:layout_alignTop="@+id/back_btn"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:id="@+id/edit_btn"
+        android:layout_alignTop="@+id/home_btn"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

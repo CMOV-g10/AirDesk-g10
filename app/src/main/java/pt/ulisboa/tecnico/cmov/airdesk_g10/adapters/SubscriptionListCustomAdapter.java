@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,9 @@ import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.SubscriptionListActivity;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.UserPermissionsActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceSubscriptions;
@@ -72,6 +75,10 @@ public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAd
         permissionsBtn.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
+                  Intent intent = new Intent(context, UserPermissionsActivity.class);
+                  intent.putExtra("NEW_WS",((SubscriptionListActivity)context).isNewWS());
+                  intent.putExtra("WS_ID", ((SubscriptionListActivity)context).getWsID());
+                  context.startActivity(intent);
 
               }
         });
