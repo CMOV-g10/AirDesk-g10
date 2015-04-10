@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,11 +15,7 @@ import android.widget.Toast;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.db.AirDeskDbHelper;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceAlreadyExistsException;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
 
 
 public class ConfigWSActivity extends ActionBarActivity {
@@ -94,7 +89,7 @@ public class ConfigWSActivity extends ActionBarActivity {
                     return;
                 }
 
-                username = context.getLoggedUser().getUsername();
+                username = context.getLoggedUser().getUseremail();
                 wsname = nameTxt.getText().toString();
                 quota = new Integer(quotaTxt.getText().toString());
                 pub = publicCb.isChecked();
@@ -103,7 +98,8 @@ public class ConfigWSActivity extends ActionBarActivity {
                 if(isNewWS){
 
                     try {
-                        context.getmDBHelper().addWorkspace(username, wsname, pub, quota, tags);
+                        //CHANGE PERMISSIONS HERE
+                        context.getmDBHelper().addWorkspace(username, wsname, pub, quota, tags, true, true, true, true);
                     } catch (AirDeskException u){
                         Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                         return;

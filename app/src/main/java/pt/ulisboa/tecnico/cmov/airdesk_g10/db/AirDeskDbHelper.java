@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.Random;
 
+import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
@@ -39,8 +40,9 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_USER_TABLE =
             "CREATE TABLE " + AirDeskContract.UserEntry.TABLE_NAME + " (" +
                     AirDeskContract.UserEntry.COLUMN_USER_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
-                    AirDeskContract.UserEntry.COLUMN_USER_NAME + TEXT_TYPE + COMMA_SEP +
-                    AirDeskContract.UserEntry.COLUMN_USER_PASSWORD + TEXT_TYPE +
+                    AirDeskContract.UserEntry.COLUMN_USER_EMAIL + TEXT_TYPE + COMMA_SEP +
+                    AirDeskContract.UserEntry.COLUMN_USER_PASSWORD + TEXT_TYPE + COMMA_SEP +
+                    AirDeskContract.UserEntry.COLUMN_USER_NICKNAME + TEXT_TYPE +
                     " )";
 
     private static final String SQL_CREATE_FILE_TABLE =
@@ -56,7 +58,11 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                     AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME + TEXT_TYPE + COMMA_SEP +
                     AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC + BOOLEAN_TYPE + COMMA_SEP +
                     AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_QUOTA + INTEGER_TYPE + COMMA_SEP +
-                    AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_TAGS + TEXT_TYPE +
+                    AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_TAGS + TEXT_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_READ_PERM + BOOLEAN_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_WRITE_PERM + BOOLEAN_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_CREATE_PERM + BOOLEAN_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_DELETE_PERM + BOOLEAN_TYPE +
                     " )";
 
     private static  final String SQL_CREATE_UHW_TABLE =
@@ -74,6 +80,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                     AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
                     AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID + INTEGER_TYPE + COMMA_SEP +
                     AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID + INTEGER_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_READ_PERM + BOOLEAN_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WRITE_PERM + BOOLEAN_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_CREATE_PERM + BOOLEAN_TYPE + COMMA_SEP +
+                    AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_DELETE_PERM + BOOLEAN_TYPE + COMMA_SEP +
                     "FOREIGN KEY("+AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID+")"+ " REFERENCES "+
                     AirDeskContract.UserEntry.TABLE_NAME+"("+AirDeskContract.UserEntry.COLUMN_USER_ID+")"+COMMA_SEP+
                     "FOREIGN KEY("+AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID+")"+ " REFERENCES "+
@@ -242,7 +252,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         Cursor cuid = db.rawQuery(SqlUid, null);
         cuid.moveToFirst();
         while(!cuid.isAfterLast()){
-            String cusername=cuid.getString(cuid.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
+            String cusername=cuid.getString(cuid.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_EMAIL));
             if(cusername.equals(username)){
                 int userid = cuid.getInt(cuid.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
                 cuid.close();
@@ -262,14 +272,15 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         c.moveToFirst();
         User u=null;
         int cuid = -1;
-        String cuname, cpass;
+        String cuname, cpass, cnickname;
         while(!c.isAfterLast()){
             cuid = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
             if(cuid == uid) {
-                cuname = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
+                cuname = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_EMAIL));
                 cpass = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
+                cnickname = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NICKNAME));
                 c.close();
-                return new User(cuid,cuname,cpass);
+                return new User(cuid,cuname,cpass, cnickname);
 
             }
             c.moveToNext();
@@ -300,19 +311,36 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             c.moveToFirst();
             String wsname, wstags;
             User wsowner;
-            int wsquota, wspublic;
-            boolean isPublic;
+            int wsquota, wspublic, wsreadPerm, wswritePerm, wscreatePerm, wsdeletePerm;
+            boolean isPublic, readPerm, writePerm, createPerm, deletePerm;
             while (!c.isAfterLast()) {
                 if (wid == c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID))) {
                     wsname = c.getString(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_NAME));
                     wsquota = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_QUOTA));
                     wspublic = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC));
+                    wstags = c.getString(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_TAGS));
+                    wsreadPerm = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_READ_PERM));
+                    wswritePerm = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_WRITE_PERM));
+                    wscreatePerm = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_CREATE_PERM));
+                    wsdeletePerm = c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_DELETE_PERM));
                     wsowner = getWorkspaceOwner(wid);
                     c.close();
                     if(wspublic==0)
                         isPublic = false;
                     else isPublic = true;
-                    return new Workspace(wid, wsname, wsquota, isPublic, wsowner); //TRUE AIN T TRUE
+                    if(wsreadPerm==0)
+                        readPerm = false;
+                    else readPerm = true;
+                    if(wswritePerm==0)
+                        writePerm = false;
+                    else writePerm = true;
+                    if(wscreatePerm==0)
+                        createPerm = false;
+                    else createPerm = true;
+                    if(wsdeletePerm==0)
+                        deletePerm = false;
+                    else deletePerm = true;
+                    return new Workspace(wid, wsname, wsquota, isPublic, wsowner, wstags, readPerm, writePerm, createPerm, deletePerm);
                 }
                 c.moveToNext();
             }
@@ -414,12 +442,13 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(Sql,null);
         c.moveToFirst();
         while(!c.isAfterLast()){
-            String cuname=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
+            String cuname=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_EMAIL));
             if(cuname.equals(username)){
                 int cuid=c.getInt(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_ID));
                 String cpass=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
+                String cnickname=c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NICKNAME));
                 c.close();
-                return new User(cuid,cuname,cpass);
+                return new User(cuid,cuname,cpass, cnickname);
             }
             c.moveToNext();
         }
@@ -482,7 +511,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         c.moveToFirst();
 
         while (!c.isAfterLast()){
-            String dbUserName = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
+            String dbUserName = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_EMAIL));
 
             if(dbUserName.equals(username)) {
                 //if user exists return true
@@ -505,7 +534,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         c.moveToFirst();
 
         while (!c.isAfterLast()){
-            String dbUserName = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_NAME));
+            String dbUserName = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_EMAIL));
             String dbUserPass = c.getString(c.getColumnIndexOrThrow(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD));
             if(dbUserName.equals(username)&&dbUserPass.equals(password)) {
                 //if user exists with pass return true
@@ -621,10 +650,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     }
 
-    public void addUser(String username, String password) {
+    public void addUser(String useremail, String password, String nickname) {
 
-        if(userExists(username)){
-            throw new UserAlreadyExistsException(username);
+        if(userExists(useremail)){
+            throw new UserAlreadyExistsException(useremail);
         }
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -632,8 +661,9 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(AirDeskContract.UserEntry.COLUMN_USER_ID, generator());
-        values.put(AirDeskContract.UserEntry.COLUMN_USER_NAME, username);
+        values.put(AirDeskContract.UserEntry.COLUMN_USER_EMAIL, useremail);
         values.put(AirDeskContract.UserEntry.COLUMN_USER_PASSWORD, password);
+        values.put(AirDeskContract.UserEntry.COLUMN_USER_NICKNAME, nickname);
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId;
@@ -644,7 +674,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     }
 
-    public void addWorkspace(String username,String wname, boolean pub,int quota, String tags){
+    public void addWorkspace(String username,String wname, boolean pub,int quota, String tags, boolean readPerm, boolean writePerm, boolean createPerm, boolean deletePerm){
         try {
             if(workspaceExists(wname, username))
                 throw new WorkspaceAlreadyExistsException(wname);
@@ -667,6 +697,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                 values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC, pub);
                 values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_QUOTA, quota);
                 values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_TAGS, tags);
+                values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_READ_PERM, readPerm);
+                values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_WRITE_PERM, writePerm);
+                values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_CREATE_PERM, createPerm);
+                values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_DELETE_PERM, deletePerm);
 
                 // Insert the new row, returning the primary key value of the new row
                 long newRowId;
@@ -740,7 +774,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void addSubscriberToWorkspace(int wid, int uid) {
+    public void addSubscriberToWorkspace(int wid, int uid, boolean readPerm, boolean writePerm, boolean createPerm, boolean deletePerm) {
         User user;
         try{
             user = getUser(uid);
@@ -749,8 +783,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         try{
             userList = new ArrayList<User>(getWorkspaceSubscribers(wid));
             for(User u: userList) {
-                if(u.getUsername().equals(user.getUsername()))
-                    throw new UserAlreadyExistsException(user.getUsername());
+                if(u.getUseremail().equals(user.getUseremail()))
+                    throw new UserAlreadyExistsException(user.getUseremail());
             }
         } catch(UserDoesNotExistException u) {throw u;}
 
@@ -761,6 +795,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_ID, generator());
         values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID, wid);
         values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID, uid);
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_READ_PERM, readPerm);
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WRITE_PERM, writePerm);
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_CREATE_PERM, createPerm);
+        values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_DELETE_PERM, deletePerm);
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId;
@@ -776,7 +814,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         try {
             tworkspace = getWorkspace(wid);
         } catch (AirDeskException e) {throw e;}
-        if(workspaceExists(workspace.getWsname(), workspace.getWsowner().getUsername()) && !(workspace.getWsname().equals(tworkspace.getWsname())))
+        if(workspaceExists(workspace.getWsname(), workspace.getWsowner().getUseremail()) && !(workspace.getWsname().equals(tworkspace.getWsname())))
             throw new WorkspaceAlreadyExistsException(workspace.getWsname());
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -787,6 +825,11 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC, workspace.isWspublic());
         values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_QUOTA, workspace.getWsquota());
         values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_TAGS, workspace.getWstags().toString());
+
+        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_READ_PERM, workspace.isReadPermission());
+        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_WRITE_PERM, workspace.isWritePermission());
+        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_CREATE_PERM, workspace.isCreatePermission());
+        values.put(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_DELETE_PERM, workspace.isDeletePermission());
         //String sql = "UPDATE "+ AirDeskContract"COMPANY SET ADDRESS = 'Texas' WHERE ID = 6;"
         //db.rawQuery(sql, null);
         db.update(AirDeskContract.WorkspaceEntry.TABLE_NAME, values, AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID + " =" + workspace.getWsid(), null);

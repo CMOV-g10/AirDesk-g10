@@ -56,7 +56,7 @@ public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAd
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.get(position).getUsername());
+        listItemText.setText(list.get(position).getUseremail());
 
         //Handle buttons and add onClickListeners
         final ToggleButton inviteBtn = (ToggleButton) view.findViewById(R.id.invite_btn);

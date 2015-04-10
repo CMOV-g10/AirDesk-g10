@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.core;
 
-import java.util.ArrayList;
-
 /**
  * Created by luis on 4/8/15.
  */
@@ -9,20 +7,15 @@ public class User {
 
     //Always filled parameteres
     private int userid;
-    private String username;
+    private String useremail;
     private String userpassword;
+    private String usernickname;
 
-    //Parameters that can be nul
-    private ArrayList<Workspace> userworkspaces;
-    private ArrayList<Workspace> usersubscriptions;
-
-    public User(int userid, String username, String userpassword) {
+    public User(int userid, String useremail, String userpassword, String usernickname) {
         this.userid = userid;
-        this.username = username;
+        this.useremail = useremail;
         this.userpassword = userpassword;
-
-        this.userworkspaces = new ArrayList<Workspace>();
-        this.usersubscriptions = new ArrayList<Workspace>();
+        this.usernickname = usernickname;
     }
 
     public int getUserid() {
@@ -33,12 +26,12 @@ public class User {
         this.userid = userid;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUseremail() {
+        return useremail;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUseremail(String useremail) {
+        this.useremail = useremail;
     }
 
     public String getUserpassword() {
@@ -47,22 +40,6 @@ public class User {
 
     public void setUserpassword(String userpassword) {
         this.userpassword = userpassword;
-    }
-
-    public ArrayList<Workspace> getUserworkspaces() {
-        return userworkspaces;
-    }
-
-    public void setUserworkspaces(ArrayList<Workspace> userworkspaces) {
-        this.userworkspaces = userworkspaces;
-    }
-
-    public ArrayList<Workspace> getUsersubscriptions() {
-        return usersubscriptions;
-    }
-
-    public void setUsersubscriptions(ArrayList<Workspace> usersubscriptions) {
-        this.usersubscriptions = usersubscriptions;
     }
 
 }

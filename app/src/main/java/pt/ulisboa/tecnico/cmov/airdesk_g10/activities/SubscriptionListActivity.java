@@ -89,7 +89,8 @@ public class SubscriptionListActivity extends ActionBarActivity {
               }
 
             try {
-                context.getmDBHelper().addSubscriberToWorkspace(wsID, user.getUserid());
+                //CHANGE PERMISSIONS HERE
+                context.getmDBHelper().addSubscriberToWorkspace(wsID, user.getUserid(), true, true, true, true);
             } catch (AirDeskException u) {
                 Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                 return;

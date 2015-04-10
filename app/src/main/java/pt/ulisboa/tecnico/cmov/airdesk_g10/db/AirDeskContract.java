@@ -15,8 +15,9 @@ public final class AirDeskContract {
         /** Implement database columns here **/
         public static final String TABLE_NAME = "user";
         public static final String COLUMN_USER_ID = "userid";
-        public static final String COLUMN_USER_NAME = "name";
+        public static final String COLUMN_USER_EMAIL = "email";
         public static final String COLUMN_USER_PASSWORD = "password";
+        public static final String COLUMN_USER_NICKNAME = "nickname";
 
     }
     public static abstract class WorkspaceEntry implements BaseColumns {
@@ -27,6 +28,10 @@ public final class AirDeskContract {
         public static final String COLUMN_WORKSPACE_QUOTA = "quota";
         public static final String COLUMN_WORKSPACE_PUBLIC = "public";
         public static final String COLUMN_WORKSPACE_TAGS = "tags";
+        public static final String COLUMN_WORKSPACE_READ_PERM = "readPermission";
+        public static final String COLUMN_WORKSPACE_WRITE_PERM = "writePermission";
+        public static final String COLUMN_WORKSPACE_CREATE_PERM = "createPermission";
+        public static final String COLUMN_WORKSPACE_DELETE_PERM = "deletePermission";
     }
     public static abstract class FileEntry implements BaseColumns {
         /** Implement database columns here **/
@@ -47,7 +52,14 @@ public final class AirDeskContract {
         public static final String COLUMN_WHS_ID = "whsid";
         public static final String COLUMN_WHS_UID = "uid";
         public static final String COLUMN_WHS_WSID = "wsid";
+        public static final String COLUMN_WHS_READ_PERM = "readPermission";
+        public static final String COLUMN_WHS_WRITE_PERM = "writePermission";
+        public static final String COLUMN_WHS_CREATE_PERM = "createPermission";
+        public static final String COLUMN_WHS_DELETE_PERM = "deletePermission";
     }
+
+
+
     public static abstract class WorkspaceHasFileEntry implements BaseColumns{
         public static final String TABLE_NAME = "workspacehasfile";
         public static final String COLUMN_WHF_ID = "whfif";

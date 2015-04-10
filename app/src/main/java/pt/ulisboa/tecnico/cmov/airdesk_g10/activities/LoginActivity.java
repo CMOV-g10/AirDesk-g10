@@ -66,7 +66,8 @@ public class LoginActivity extends ActionBarActivity {
                 String loginName = usernameTxt.getText().toString();
                 if (!context.getmDBHelper().userExists(loginName)) {
                     try {
-                        context.getmDBHelper().addUser(loginName, loginPassword);
+                        //CHANGE NICKNAME HERE
+                        context.getmDBHelper().addUser(loginName, loginPassword, loginName);
                     } catch (AirDeskException a) {
                         Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
                         return;
@@ -89,19 +90,20 @@ public class LoginActivity extends ActionBarActivity {
     public void populateDomain() {
         context.getmDBHelper().onUpgrade(context.getmDBHelper().getWritableDatabase(), context.getmDBHelper().DATABASE_VERSION, context.getmDBHelper().DATABASE_VERSION);
         try {
-            this.context.getmDBHelper().addUser("p", "b");
+            this.context.getmDBHelper().addUser("p", "b", "p");
         } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         try {
-            this.context.getmDBHelper().addWorkspace("p", "CMOV", true, 50, "");
+            //CHANGE PERMISSIONS HERE
+            this.context.getmDBHelper().addWorkspace("p", "CMOV", true, 50, "", true, true, true, true);
         } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         try {
-            this.context.getmDBHelper().addWorkspace("p", "AASMA", true, 50, "");
+            this.context.getmDBHelper().addWorkspace("p", "AASMA", true, 50, "", true, true, true, true);
         } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -109,7 +111,7 @@ public class LoginActivity extends ActionBarActivity {
         try {
             this.context.getmDBHelper().addSubscriberToWorkspace(
                     this.context.getmDBHelper().getWorkspaceId("CMOV", this.context.getmDBHelper().getUserId("p")),
-                        this.context.getmDBHelper().getUserId("p"));
+                        this.context.getmDBHelper().getUserId("p"), true, true, true, true);
         } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -117,7 +119,7 @@ public class LoginActivity extends ActionBarActivity {
         try {
             this.context.getmDBHelper().addSubscriberToWorkspace(
                     this.context.getmDBHelper().getWorkspaceId("AASMA", this.context.getmDBHelper().getUserId("p")),
-                    this.context.getmDBHelper().getUserId("p"));
+                    this.context.getmDBHelper().getUserId("p"), true, true, true, true);
         } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }

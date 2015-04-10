@@ -17,38 +17,40 @@ public class Workspace {
     private boolean wspublic;
     private User wsowner;
 
-    //Parameters that can be null
     private ArrayList<String> wstags;
-    private ArrayList<User> wssubscription;
-    private ArrayList<File> wsfiles;
 
-    public Workspace(int wsid, String wsname, int wsquota, boolean wspublic, User wsowner) {
+    private boolean readPermission;
+    private boolean writePermission;
+    private boolean createPermission;
+    private boolean deletePermission;
+
+
+    public Workspace(int wsid, String wsname, int wsquota, boolean wspublic, User wsowner, ArrayList<String> wstags, boolean readPermission, boolean writePermission, boolean createPermission, boolean deletePermission) {
         this.wsid = wsid;
         this.wsname = wsname;
         this.wsquota = wsquota;
         this.wspublic = wspublic;
         this.wsowner = wsowner;
+        this.wstags = wstags;
+        this.readPermission = readPermission;
+        this.writePermission = writePermission;
+        this.createPermission = createPermission;
+        this.deletePermission = deletePermission;
+    }
 
-        this.wstags = new ArrayList<String>(){
-            private static final long serialVersionUID = 1L;
-
-            @Override public String toString()
-            {
-                String result = "";
-                for(String s : this){
-                    result = result + s + ",";
-                }
-
-                if(!result.equals(""))
-                return result.substring(0,result.length()-1);
-                else
-                return result;
-            }
-        };
-
-        this.wssubscription = new ArrayList<User>();
-        this.wsfiles = new ArrayList<File>();
-
+    public Workspace(int wsid, String wsname, int wsquota, boolean wspublic, User wsowner, String wstags, boolean readPermission, boolean writePermission, boolean createPermission, boolean deletePermission) {
+        String delims = ",";
+        String[] tokens = wstags.split(delims);
+        this.wstags = new ArrayList<String>(Arrays.asList(tokens));
+        this.wsid = wsid;
+        this.wsname = wsname;
+        this.wsquota = wsquota;
+        this.wspublic = wspublic;
+        this.wsowner = wsowner;
+        this.readPermission = readPermission;
+        this.writePermission = writePermission;
+        this.createPermission = createPermission;
+        this.deletePermission = deletePermission;
     }
 
     public int getWsid() {
@@ -67,20 +69,24 @@ public class Workspace {
         return wspublic;
     }
 
+    public String getWstagsInString() {
+        String result = "";
+        for(String s : wstags){
+            result = result + s + ",";
+        }
+
+        if(!result.equals(""))
+            return result.substring(0,result.length()-1);
+        else
+            return result;
+    }
+
     public ArrayList<String> getWstags() {
         return wstags;
     }
 
-    public ArrayList<User> getWssubscription() {
-        return wssubscription;
-    }
-
     public User getWsowner() {
         return wsowner;
-    }
-
-    public ArrayList<File> getWsfiles() {
-        return wsfiles;
     }
 
     public void setWsid(int wsid) {
@@ -109,18 +115,41 @@ public class Workspace {
         this.wstags = new ArrayList<String>(Arrays.asList(tokens));
     }
 
-    public void setWssubscription(ArrayList<User> wssubscription) {
-        this.wssubscription = wssubscription;
-    }
-
     public void setWsowner(User wsowner) {
         this.wsowner = wsowner;
     }
 
-    public void setWsfiles(ArrayList<File> wsfiles) {
-        this.wsfiles = wsfiles;
+    public boolean isReadPermission() {
+        return readPermission;
     }
 
+    public void setReadPermission(boolean readPermission) {
+        this.readPermission = readPermission;
+    }
+
+    public boolean isWritePermission() {
+        return writePermission;
+    }
+
+    public void setWritePermission(boolean writePermission) {
+        this.writePermission = writePermission;
+    }
+
+    public boolean isCreatePermission() {
+        return createPermission;
+    }
+
+    public void setCreatePermission(boolean createPermission) {
+        this.createPermission = createPermission;
+    }
+
+    public boolean isDeletePermission() {
+        return deletePermission;
+    }
+
+    public void setDeletePermission(boolean deletePermission) {
+        this.deletePermission = deletePermission;
+    }
 
 
 }
