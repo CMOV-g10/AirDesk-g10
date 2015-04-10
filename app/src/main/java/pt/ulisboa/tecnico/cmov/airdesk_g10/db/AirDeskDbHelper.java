@@ -1062,11 +1062,28 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         if(!workspaceExists(wid)){
             throw new WorkspaceDoesNotExistException(wid);
         }
-        SQLiteDatabase db=this.getWritableDatabase();
 
+        SQLiteDatabase db= this.getWritableDatabase();
+        db.beginTransaction();
+        boolean d1 = false;
+        boolean d2 = false;
+        boolean d3 = false;
+        boolean d4 = false;
+        try{
             String wcWE=AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID+" = "+ wid;
-            return db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcWE,null)>0;
-
+            String wcUHWE=AirDeskContract.UserHasWorkspaceEntry.COLUMN_UHW_WSID+" = "+ wid;
+            String wcWHSE=AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID+" = "+ wid;
+            String wcWHFE=AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_WSID+" = "+ wid;
+           d1= db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcWE,null)>0;
+            d2= db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcUHWE,null)>0;
+            d3= db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcWHSE,null)>0;
+            d4= db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcWHFE,null)>0;
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
+        }
+        return d1&&d2;
     }
 
     public int generator(){

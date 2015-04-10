@@ -43,7 +43,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Username"
         android:ems="10"
         android:id="@+id/name_txt"
         android:layout_above="@+id/home_btn"
@@ -52,5 +51,6 @@
         android:layout_toStartOf="@+id/add_btn"
         android:layout_alignRight="@+id/home_btn"
         android:layout_alignEnd="@+id/home_btn"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="20dp"
+        android:hint="email" />
 </RelativeLayout>
