@@ -3,18 +3,18 @@
     package="pt.ulisboa.tecnico.cmov.airdesk_g10" >
 
     <application
-        android:name="AirDesk"
+        android:name=".AirDesk"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name=".activities.OwnedWSActivity"
-            android:label="@string/title_activity_owned_ws">
+            android:label="@string/title_activity_owned_ws" >
         </activity>
         <activity
             android:name=".activities.LoginActivity"
@@ -35,11 +35,11 @@
         </activity>
         <activity
             android:name=".activities.SubscriptionListActivity"
-            android:label="@string/title_activity_subscription_list">
+            android:label="@string/title_activity_subscription_list" >
         </activity>
         <activity
             android:name=".activities.SearchByTagsActivity"
-            android:label="@string/title_activity_search_by_tags">
+            android:label="@string/title_activity_search_by_tags" >
         </activity>
         <activity
             android:name=".activities.FileListActivity"
@@ -51,11 +51,15 @@
         </activity>
         <activity
             android:name=".activities.ReadFileActivity"
-            android:label="@string/title_activity_read_file">
+            android:label="@string/title_activity_read_file" >
         </activity>
         <activity
             android:name=".activities.RegisterActivity"
-            android:label="@string/title_activity_register">
+            android:label="@string/title_activity_register" >
+        </activity>
+        <activity
+            android:name=".activities.UserPermissionsActivity"
+            android:label="@string/title_activity_user_permissions" >
         </activity>
     </application>
 

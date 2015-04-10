@@ -106,8 +106,13 @@ public class FileListActivity extends ActionBarActivity {
         });
 
         //generate WS list
-        WorkspaceFiles list = context.getmDBHelper().getWorkspaceFiles(wsID);
-
+        WorkspaceFiles list;
+        try {
+            list = context.getmDBHelper().getWorkspaceFiles(wsID);
+        } catch (AirDeskException u){
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
         //instantiate custom adapter
         FileListCustomAdapter adapter = new FileListCustomAdapter(list, this, context);
 

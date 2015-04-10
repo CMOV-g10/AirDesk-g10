@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceSubscriptions;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileDoesNotExistException;
@@ -270,12 +271,18 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<User> getWorkspaceSubscribers(int wid) {
+    public WorkspaceSubscriptions getWorkspaceSubscribers(int wid) {
         Cursor c;
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlWHS= "SELECT * FROM "+AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME;
         ArrayList<User> subscribers = new ArrayList<User>();
         c=db.rawQuery(SqlWHS,null);
+        Workspace ws;
+        try{
+            ws = getWorkspace(wid);
+        }catch( AirDeskException u){
+            throw u;
+        }
 
         try{
             c.moveToFirst();
@@ -286,8 +293,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                 c.moveToNext();
             }
             c.close();
-            return subscribers;
-        } catch(UserDoesNotExistException u){
+            return new WorkspaceSubscriptions(ws, subscribers);
+        } catch(AirDeskException u){
             c.close();
             throw u;
         }
@@ -892,10 +899,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         try{
             user = getUser(uid);
         } catch(UserDoesNotExistException u) {throw u;}
-        ArrayList<User> userList;
+        WorkspaceSubscriptions userList;
         try{
-            userList = new ArrayList<User>(getWorkspaceSubscribers(wid));
-            for(User u: userList) {
+            userList = getWorkspaceSubscribers(wid);
+            for(User u: userList.getSubscriptions()) {
                 if(u.getUseremail().equals(user.getUseremail()))
                     throw new UserAlreadyExistsException(user.getUseremail());
             }
