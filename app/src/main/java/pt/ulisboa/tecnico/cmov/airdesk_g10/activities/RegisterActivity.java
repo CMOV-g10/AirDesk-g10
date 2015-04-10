@@ -41,6 +41,11 @@ public class RegisterActivity extends ActionBarActivity {
                 String pass = passwordTxt.getText().toString();
                 String passconf = passwordConfirmationTxt.getText().toString();
 
+                if(email.equals("") || nickname.equals("") || pass.equals("") || passconf.equals("")) {
+                    Toast.makeText(context, "Please fill all fields.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 if (!context.getmDBHelper().userExists(email)) {
                     if (pass.equals(passconf)) {
                         try {
