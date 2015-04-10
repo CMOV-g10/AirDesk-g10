@@ -116,7 +116,8 @@
         android:layout_alignRight="@+id/name_txt"
         android:layout_alignEnd="@+id/name_txt"
         android:layout_alignLeft="@+id/public_cb"
-        android:layout_alignStart="@+id/public_cb" />
+        android:layout_alignStart="@+id/public_cb"
+        android:hint="(in KB)" />
 
     <Button
         android:layout_width="wrap_content"

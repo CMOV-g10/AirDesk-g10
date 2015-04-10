@@ -14,7 +14,9 @@ import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 
@@ -129,6 +131,17 @@ public class ConfigWSActivity extends ActionBarActivity {
                         ws = context.getmDBHelper().getWorkspace(wsID);
                     } catch (AirDeskException u) {
                         Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    WorkspaceFiles wsFiles = context.getmDBHelper().getWorkspaceFiles(wsID);
+                    long wsCurrentSize = 0;
+                    for (File f : wsFiles.getFiles()){
+                        wsCurrentSize += f.getFilecontent().length();
+                    }
+
+                    if(wsCurrentSize > (quota*1024)){
+                        Toast.makeText(context, "Quota invalid.", Toast.LENGTH_LONG).show();
                         return;
                     }
 

@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 
@@ -109,6 +110,15 @@ public class FileActivity extends ActionBarActivity {
 
                 if(operation == OPERATION_EDIT) {
 
+                    Workspace ws;
+
+                    try {
+                        ws = context.getmDBHelper().getWorkspace(wsID);
+                    } catch (AirDeskException u){
+                        Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     File f;
                     try {
                         f = context.getmDBHelper().getFile(fID);
@@ -118,6 +128,17 @@ public class FileActivity extends ActionBarActivity {
                     }
                     f.setFiletitle(fileTitleTxt.getText().toString());
                     f.setFilecontent(fileContentTxt.getText().toString());
+
+                    WorkspaceFiles wsFiles = context.getmDBHelper().getWorkspaceFiles(wsID);
+                    long wsCurrentSize = 0;
+                    for (File fi : wsFiles.getFiles()){
+                        wsCurrentSize += fi.getFilecontent().length();
+                    }
+
+                    if((wsCurrentSize+fileContentTxt.getText().toString().length()) > (ws.getWsquota()*1024)){
+                        Toast.makeText(context, "Quota limit exceeded.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
                     try {
                         context.getmDBHelper().changeFileData(f);
@@ -141,7 +162,15 @@ public class FileActivity extends ActionBarActivity {
                         return;
                     }
 
-                 //   long currentSize = context.getmDBHelper().get
+                    WorkspaceFiles wsFiles = context.getmDBHelper().getWorkspaceFiles(wsID);
+                    long wsCurrentSize = 0;
+                    for (File f : wsFiles.getFiles()){
+                        wsCurrentSize += f.getFilecontent().length();
+                    }
+                    if((wsCurrentSize+fileContentTxt.getText().toString().length()) > (ws.getWsquota()*1024)){
+                        Toast.makeText(context, "Quota limit exceeded.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
 
                     try {
