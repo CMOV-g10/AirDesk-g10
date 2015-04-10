@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.Random;
 
-import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Subscription;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
@@ -19,6 +18,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileDoesNotExistException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.NoWorkspaceWithTagException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.SubscriptionDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
@@ -290,6 +290,41 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         } catch(UserDoesNotExistException u){
             c.close();
             throw u;
+        }
+    }
+
+    public ArrayList<Workspace> getWorkspaceByTags(String tag){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
+        Cursor c= db.rawQuery(query,null);
+        c.moveToFirst();
+        String delim = ",";
+        String tags[];
+        ArrayList<Workspace>wlist=new ArrayList<>();
+        try{
+            while(!c.isAfterLast()) {
+                int check=c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_PUBLIC));
+                if(check==1){
+                    int wid= c.getInt(c.getColumnIndexOrThrow(AirDeskContract.WorkspaceEntry.COLUMN_WORKSPACE_ID));
+                    ArrayList<String> wtags=this.getWorkspaceTags(wid);
+                    for(String s: wtags){
+                        if(s.equals(tag)){
+                            wlist.add(this.getWorkspace(wid));
+                        }
+                    }
+
+                }
+                c.moveToNext();
+            }
+            c.close();
+            if(wlist.isEmpty()){
+                throw new NoWorkspaceWithTagException(tag);
+            }
+            return wlist;
+        }
+        catch (AirDeskException a){
+            c.close();
+            throw a;
         }
     }
 

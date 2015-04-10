@@ -78,16 +78,20 @@ public class LoginActivity extends ActionBarActivity {
         } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
-
+        try {
+            this.context.getmDBHelper().addUser("a", "a", "a");
+        } catch (AirDeskException u) {
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+        }
         try {
             //CHANGE PERMISSIONS HERE
-            this.context.getmDBHelper().addWorkspace("p", "CMOV", true, 50, "", true, true, true, true);
+            this.context.getmDBHelper().addWorkspace("p", "CMOV", true, 50, "banana,morango", true, true, true, true);
         } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         try {
-            this.context.getmDBHelper().addWorkspace("p", "AASMA", true, 50, "", true, true, true, true);
+            this.context.getmDBHelper().addWorkspace("p", "AASMA", true, 50, "putas,vinho verde", true, true, true, true);
         } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }

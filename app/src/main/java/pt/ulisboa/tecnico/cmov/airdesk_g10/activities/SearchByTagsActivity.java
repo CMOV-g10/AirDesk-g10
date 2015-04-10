@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.airdesk_g10.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -16,23 +18,26 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.JoinWSListCustomAdapter;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 
 public class SearchByTagsActivity extends ActionBarActivity {
 
     private AirDesk context;
-    private ListView wsList;
+   private ListView wsList;
     private EditText searchTxt;
     private Button searchBtn;
     private Button homeBtn;
     private Button backBtn;
-
+    private Context myContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_by_tags);
 
+        setContentView(R.layout.activity_search_by_tags);
+        context = (AirDesk) getApplicationContext();
+        myContext = this;
         this.homeBtn = (Button) findViewById(R.id.home_btn);
         this.homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,22 +58,28 @@ public class SearchByTagsActivity extends ActionBarActivity {
         this.searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Produce search query to DB
+
+                String tag=searchTxt.getText().toString();
+                if(!tag.equals("")){
+                    try{
+                        ArrayList<Workspace> wList =context.getmDBHelper().getWorkspaceByTags(tag);
+
+              //  Toast.makeText(context,wList.toString(), Toast.LENGTH_LONG).show();
+                        JoinWSListCustomAdapter adapter = new JoinWSListCustomAdapter(wList, myContext, context);
+
+                        wsList.setAdapter(adapter);}
+                    catch (AirDeskException a){
+                        Toast.makeText(context,a.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+                else{
+                    Toast.makeText(context,"No tags inserted", Toast.LENGTH_LONG).show();
+                    return;
+                }
             }
         });
         this.searchTxt = (EditText) findViewById(R.id.search_txt);
-
-        //generate WS list
-        ArrayList<Workspace> list = new ArrayList<Workspace>();
-        /*list.add("WS3");
-        list.add("WS4");*/
-
-        //instantiate custom adapter
-        JoinWSListCustomAdapter adapter = new JoinWSListCustomAdapter(list, this, context);
-
-        //handle listview and assign adapter
         this.wsList = (ListView)findViewById(R.id.fws_list);
-        this.wsList.setAdapter(adapter);
     }
 
 
