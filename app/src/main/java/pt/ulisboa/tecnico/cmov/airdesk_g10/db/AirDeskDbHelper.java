@@ -1075,9 +1075,9 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             String wcWHSE=AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID+" = "+ wid;
             String wcWHFE=AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_WSID+" = "+ wid;
            d1= db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcWE,null)>0;
-            d2= db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcUHWE,null)>0;
-            d3= db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcWHSE,null)>0;
-            d4= db.delete(AirDeskContract.WorkspaceEntry.TABLE_NAME,wcWHFE,null)>0;
+            d2= db.delete(AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME,wcUHWE,null)>0;
+            d3= db.delete(AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME,wcWHSE,null)>0;
+            d4= db.delete(AirDeskContract.WorkspaceHasFileEntry.TABLE_NAME,wcWHFE,null)>0;
             db.setTransactionSuccessful();
         }
         finally {
