@@ -58,7 +58,7 @@ public class JoinWSListCustomAdapter extends BaseAdapter implements ListAdapter 
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.get(position).getWsname());
+        listItemText.setText(list.get(position).getWsname()+" by "+list.get(position).getWsowner().getUseremail());
 
         //Handle buttons and add onClickListeners
         final ToggleButton joinBtn = (ToggleButton) view.findViewById(R.id.join_btn);
