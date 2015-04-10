@@ -11,11 +11,14 @@ import java.util.Random;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Subscription;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileDoesNotExistException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.SubscriptionDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceAlreadyExistsException;
@@ -171,29 +174,98 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<Workspace> getUserSubscriptions(int uid){
+    public Subscription getSubscription(int wsid, int uid){
         Cursor cUHW;
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlUHW= "SELECT * FROM "+AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME;
-        ArrayList<Workspace> wid=new ArrayList<Workspace>();
         cUHW=db.rawQuery(SqlUHW,null);
+        User user;
+        try {
+            user = getUser(uid);
+        }catch (AirDeskException u) {throw u;}
+
+        Workspace ws;
+        try {
+            ws = getWorkspace(wsid);
+        }catch (AirDeskException u) {throw u;}
+
+        try{
+            cUHW.moveToFirst();
+            while(!cUHW.isAfterLast()){
+                if((uid==cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID))) &&
+                        (wsid==cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID)))){
+                    int wsreadPerm = cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_READ_PERM));
+                    int wswritePerm = cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WRITE_PERM));
+                    int wscreatePerm = cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_CREATE_PERM));
+                    int wsdeletePerm = cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_DELETE_PERM));
+                    boolean readPerm, writePerm, createPerm, deletePerm;
+                    if(wsreadPerm==0)
+                        readPerm = false;
+                    else readPerm = true;
+                    if(wswritePerm==0)
+                        writePerm = false;
+                    else writePerm = true;
+                    if(wscreatePerm==0)
+                        createPerm = false;
+                    else createPerm = true;
+                    if(wsdeletePerm==0)
+                        deletePerm = false;
+                    else deletePerm = true;
+                    cUHW.close();
+                    return new Subscription(user, ws, readPerm, writePerm, createPerm, deletePerm);
+                }
+                cUHW.moveToNext();
+            }
+            cUHW.close();
+            throw new SubscriptionDoesNotExistException(uid, wsid);
+        } catch(AirDeskException w){
+            cUHW.close();
+            throw w;
+        }
+    }
+
+    public UserSubscriptions getUserSubscriptions(int uid){
+        Cursor cUHW;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String SqlUHW= "SELECT * FROM "+AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME;
+        ArrayList<Subscription> wid=new ArrayList<Subscription>();
+        cUHW=db.rawQuery(SqlUHW,null);
+        User user;
+        try {
+            user = getUser(uid);
+        }catch (AirDeskException u) {throw u;}
 
         try{
             cUHW.moveToFirst();
             while(!cUHW.isAfterLast()){
                 if(uid==cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID))){
-                    wid.add(this.getWorkspace(cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID))));
+                    int wsreadPerm = cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_READ_PERM));
+                    int wswritePerm = cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WRITE_PERM));
+                    int wscreatePerm = cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_CREATE_PERM));
+                    int wsdeletePerm = cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_DELETE_PERM));
+                    boolean readPerm, writePerm, createPerm, deletePerm;
+                    if(wsreadPerm==0)
+                        readPerm = false;
+                    else readPerm = true;
+                    if(wswritePerm==0)
+                        writePerm = false;
+                    else writePerm = true;
+                    if(wscreatePerm==0)
+                        createPerm = false;
+                    else createPerm = true;
+                    if(wsdeletePerm==0)
+                        deletePerm = false;
+                    else deletePerm = true;
+
+                    wid.add(new Subscription(user, getWorkspace(cUHW.getInt(cUHW.getColumnIndexOrThrow(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID))), readPerm, writePerm, createPerm, deletePerm));
                 }
                 cUHW.moveToNext();
             }
             cUHW.close();
-            return wid;
-        } catch(WorkspaceDoesNotExistException w){
+            return new UserSubscriptions(user,wid);
+        } catch(AirDeskException w){
             cUHW.close();
             throw w;
-        } catch(UserDoesNotExistException u){
-            cUHW.close();
-            throw u;
         }
     }
 
@@ -349,6 +421,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         } catch(UserDoesNotExistException u){c.close(); throw u;}
 
     }
+
 
     public File getFile(int fid) {
         Cursor c = null;

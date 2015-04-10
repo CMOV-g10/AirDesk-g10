@@ -110,7 +110,7 @@ public class Workspace {
     }
 
     public void setWstags(String wstags) {
-        String delims = ",";
+        String delims = "[,]";
         String[] tokens = wstags.split(delims);
         this.wstags = new ArrayList<String>(Arrays.asList(tokens));
     }

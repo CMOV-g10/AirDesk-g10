@@ -132,18 +132,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Global Permissions"
+        android:text="Subscribers Global Permissions"
         android:id="@+id/perm_txtv"
-        android:layout_marginTop="38dp"
         android:layout_below="@+id/tags_txtv"
-        android:layout_centerHorizontal="true" />
+        android:layout_toRightOf="@+id/tags_txtv"
+        android:layout_toEndOf="@+id/tags_txtv"
+        android:layout_marginTop="31dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textView"
+        android:text="Read"
+        android:id="@+id/read_txtv"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -152,9 +153,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textView2"
-        android:layout_alignTop="@+id/textView"
+        android:text="Write"
+        android:id="@+id/write_txtv"
+        android:layout_alignTop="@+id/read_txtv"
         android:layout_toRightOf="@+id/home_btn"
         android:layout_toEndOf="@+id/home_btn" />
 
@@ -162,9 +163,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textView3"
-        android:layout_below="@+id/textView"
+        android:text="Create"
+        android:id="@+id/create_txtv"
+        android:layout_below="@+id/read_txtv"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="36dp" />
@@ -173,10 +174,46 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textView4"
-        android:layout_alignTop="@+id/textView3"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_alignStart="@+id/textView2" />
+        android:text="Delete"
+        android:id="@+id/delete_txtv"
+        android:layout_alignTop="@+id/create_txtv"
+        android:layout_alignLeft="@+id/write_txtv"
+        android:layout_alignStart="@+id/write_txtv" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/read_cb"
+        android:checked="false"
+        android:layout_alignTop="@+id/read_txtv"
+        android:layout_alignLeft="@+id/create_cb"
+        android:layout_alignStart="@+id/create_cb" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/write_cb"
+        android:checked="false"
+        android:layout_alignTop="@+id/write_txtv"
+        android:layout_alignRight="@+id/tags_txt"
+        android:layout_alignEnd="@+id/tags_txt" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/create_cb"
+        android:checked="false"
+        android:layout_alignTop="@+id/create_txtv"
+        android:layout_toLeftOf="@+id/editSubs_btn"
+        android:layout_toStartOf="@+id/editSubs_btn" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/delete_cb"
+        android:checked="false"
+        android:layout_alignTop="@+id/delete_txtv"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

@@ -32,6 +32,11 @@ public class ConfigWSActivity extends ActionBarActivity {
     private CheckBox publicCb;
     private EditText tagsTxt;
 
+    private CheckBox readPermCb;
+    private CheckBox writePermCb;
+    private CheckBox createPermCb;
+    private CheckBox deletePermCb;
+
     private boolean isNewWS;
     private int wsID;
 
@@ -58,6 +63,11 @@ public class ConfigWSActivity extends ActionBarActivity {
         this.publicCb = (CheckBox) findViewById(R.id.public_cb);
         this.tagsTxt = (EditText) findViewById(R.id.tags_txt);
 
+        this.readPermCb = (CheckBox) findViewById(R.id.read_cb);
+        this.writePermCb = (CheckBox) findViewById(R.id.write_cb);
+        this.createPermCb = (CheckBox) findViewById(R.id.create_cb);
+        this.deletePermCb = (CheckBox) findViewById(R.id.delete_cb);
+
         this.editSubsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +90,7 @@ public class ConfigWSActivity extends ActionBarActivity {
                 String username;
                 String wsname;
                 int quota;
-                boolean pub;
+                boolean pub, readP, writeP, createP, deleteP;
                 String tags;
 
                 if(nameTxt.getText().toString().equals("") ||
@@ -93,13 +103,19 @@ public class ConfigWSActivity extends ActionBarActivity {
                 wsname = nameTxt.getText().toString();
                 quota = new Integer(quotaTxt.getText().toString());
                 pub = publicCb.isChecked();
+
+                readP = readPermCb.isChecked();
+                writeP = writePermCb.isChecked();
+                createP = createPermCb.isChecked();
+                deleteP = deletePermCb.isChecked();
+
                 tags = tagsTxt.getText().toString();
 
                 if(isNewWS){
 
                     try {
                         //CHANGE PERMISSIONS HERE
-                        context.getmDBHelper().addWorkspace(username, wsname, pub, quota, tags, true, true, true, true);
+                        context.getmDBHelper().addWorkspace(username, wsname, pub, quota, tags, readP, writeP, createP, deleteP);
                     } catch (AirDeskException u){
                         Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                         return;
@@ -122,6 +138,10 @@ public class ConfigWSActivity extends ActionBarActivity {
                     ws.setWsquota(quota);
                     ws.setWspublic(pub);
                     ws.setWstags(tags);
+                    ws.setReadPermission(readP);
+                    ws.setWritePermission(writeP);
+                    ws.setCreatePermission(createP);
+                    ws.setDeletePermission(deleteP);
 
                     try {
                         context.getmDBHelper().changeWorkspaceData(ws);
@@ -158,6 +178,14 @@ public class ConfigWSActivity extends ActionBarActivity {
             tagsTxt.setText(ws.getWstags().toString(),TextView.BufferType.EDITABLE);
             publicCb.setChecked(ws.isWspublic());
             createBtn.setText("EDIT",TextView.BufferType.EDITABLE);
+
+            readPermCb.setChecked(ws.isReadPermission());
+            writePermCb.setChecked(ws.isWritePermission());
+            createPermCb.setChecked(ws.isCreatePermission());
+            deletePermCb.setChecked(ws.isDeletePermission());
+
+        } else {
+            editSubsBtn.setVisibility(View.INVISIBLE);
         }
 
     }

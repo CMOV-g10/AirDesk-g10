@@ -7,17 +7,18 @@
         android:id="@+id/list_item_string"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:paddingLeft="8dp"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_toLeftOf="@+id/edit_btn"
-        android:layout_toStartOf="@+id/edit_btn" />
+        android:layout_toStartOf="@+id/edit_btn"
+        android:layout_alignBottom="@+id/edit_btn"
+        android:layout_alignTop="@+id/edit_btn" />
 
     <Button
         android:id="@+id/delete_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="75dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
@@ -26,11 +27,19 @@
 
     <Button
         android:id="@+id/edit_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="75dp"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/delete_btn"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        android:text="Edit" />
+        android:text="Edit"
+        android:layout_alignTop="@+id/delete_btn"
+        android:layout_toLeftOf="@+id/delete_btn" />
+
+    <Button
+        android:id="@+id/read_btn"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:text="Read"
+        android:layout_alignTop="@+id/edit_btn"
+        android:layout_toLeftOf="@+id/edit_btn"
+        android:layout_toStartOf="@+id/edit_btn" />
 
 </RelativeLayout>

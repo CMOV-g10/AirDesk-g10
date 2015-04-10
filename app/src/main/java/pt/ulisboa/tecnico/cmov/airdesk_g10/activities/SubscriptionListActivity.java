@@ -45,6 +45,14 @@ public class SubscriptionListActivity extends ActionBarActivity {
 
     private Context myContext;
 
+    public int getWsID() {
+        return wsID;
+    }
+
+    public boolean isNewWS() {
+        return isNewWS;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,11 +96,19 @@ public class SubscriptionListActivity extends ActionBarActivity {
                   return;
               }
 
+            Workspace ws;
+
+            try{
+                ws = context.getmDBHelper().getWorkspace(wsID);
+            } catch (AirDeskException a){
+                Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            }
+
             try {
-                //CHANGE PERMISSIONS HERE
-                context.getmDBHelper().addSubscriberToWorkspace(wsID, user.getUserid(), true, true, true, true);
-            } catch (AirDeskException u) {
-                Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                context.getmDBHelper().addSubscriberToWorkspace(wsID, context.getLoggedUser().getUserid(), ws.isReadPermission(), ws.isWritePermission(), ws.isCreatePermission(), ws.isDeletePermission());
+            } catch(AirDeskException a) {
+                Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
                 return;
             }
                 ArrayList<User> list;

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
@@ -22,11 +23,11 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
  */
 public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapter {
 
-    private ArrayList<Workspace> list = new ArrayList<Workspace>();
+    private UserSubscriptions list;
     private Context context;
     private AirDesk airDesk;
 
-    public ForeignWSListCustomAdapter(ArrayList<Workspace> list, Context context, AirDesk airDesk) {
+    public ForeignWSListCustomAdapter(UserSubscriptions list, Context context, AirDesk airDesk) {
         this.list = list;
         this.context = context;
         this.airDesk = airDesk;
@@ -34,12 +35,12 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
 
     @Override
     public int getCount() {
-        return list.size();
+        return list.getSubscriptions().size();
     }
 
     @Override
     public Object getItem(int pos) {
-        return list.get(pos);
+        return list.getSubscriptions().get(pos);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.get(position).getWsname());
+        listItemText.setText(list.getSubscriptions().get(position).getWorkspace().getWsname());
 
         //Handle buttons and add onClickListeners
         final Button leaveBtn = (Button) view.findViewById(R.id.leave_btn);
@@ -67,7 +68,7 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
         leaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int wid = list.get(position).getWsid();
+                int wid = list.getSubscriptions().get(position).getWorkspace().getWsid();
                 int uid = airDesk.getLoggedUser().getUserid();
                 try {
                    airDesk.getmDBHelper().removeSubscriptionFromUser(wid, uid);
@@ -76,14 +77,7 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
                     return;
                 }
 
-                try {
-                    airDesk.setLoggedUser(airDesk.getmDBHelper().getUser(airDesk.getLoggedUser().getUserid()));
-                } catch (AirDeskException u){
-                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                list.remove(position); //or some other task
+                list.getSubscriptions().remove(position); //or some other task
                 notifyDataSetChanged();
             }
         });

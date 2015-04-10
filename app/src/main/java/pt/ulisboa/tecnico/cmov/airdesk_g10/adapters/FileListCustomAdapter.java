@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,9 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.ConfigWSActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileListActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Subscription;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 /**
  * Created by luis on 4/9/15.
@@ -73,12 +76,46 @@ public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
         //Handle buttons and add onClickListeners
         Button deleteBtn = (Button)view.findViewById(R.id.delete_btn);
         Button editBtn = (Button)view.findViewById(R.id.edit_btn);
+        Button readBtn = (Button) view.findViewById(R.id.read_btn);
 
         deleteBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 //do something
-                list.remove(position); //or some other task
+
+                int ws_ID;
+                try {
+                    ws_ID = airDesk.getmDBHelper().getWorkspaceByFile(list.get(position).getFileid());
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                Workspace ws;
+                try {
+                    ws = airDesk.getmDBHelper().getWorkspace(ws_ID);
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+
+                //I'm the owner
+                if(ws.getWsowner().getUserid() == airDesk.getLoggedUser().getUserid()){
+
+                } else {
+
+                    Subscription sub = airDesk.getmDBHelper().getSubscription(ws.getWsid(), airDesk.getLoggedUser().getUserid());
+
+
+
+                }
+
+
+
+
+
                 notifyDataSetChanged();
             }
         });
@@ -88,6 +125,13 @@ public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
 
             }
         });
+        readBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         return view;
     }

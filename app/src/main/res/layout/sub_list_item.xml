@@ -25,5 +25,13 @@
         android:textOff="Invite"
         android:checked="false" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Permissions"
+        android:id="@+id/editPerm_btn"
+        android:layout_alignTop="@+id/invite_btn"
+        android:layout_toLeftOf="@+id/invite_btn" />
+
 
 </RelativeLayout>

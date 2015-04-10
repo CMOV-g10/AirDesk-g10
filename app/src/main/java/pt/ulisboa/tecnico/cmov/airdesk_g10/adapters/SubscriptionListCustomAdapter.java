@@ -7,13 +7,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.SubscriptionListActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 /**
  * Created by Pedro on 4/9/2015.
@@ -67,11 +71,44 @@ public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAd
             public void onClick(View v) {
                 boolean on = inviteBtn.isChecked();
                 if (on){
+                    int userId = list.get(position).getUserid();
+                    int wid = ((SubscriptionListActivity) context).getWsID();
+                    int uid = airDesk.getLoggedUser().getUserid();
 
+                    Workspace ws;
+
+                    try{
+                        ws = airDesk.getmDBHelper().getWorkspace(wid);
+                    } catch (AirDeskException a){
+                        Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    try {
+                        airDesk.getmDBHelper().addSubscriberToWorkspace(wid, uid, ws.isReadPermission(), ws.isWritePermission(), ws.isCreatePermission(), ws.isDeletePermission());
+                    } catch(AirDeskException a) {
+                        Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    inviteBtn.setChecked(true);
+                    notifyDataSetChanged();
 
 
                 }else{
                     int userId = list.get(position).getUserid();
+                    int wid = ((SubscriptionListActivity) context).getWsID();
+                    int uid = airDesk.getLoggedUser().getUserid();
+
+                    try {
+                        airDesk.getmDBHelper().removeSubscriptionFromUser(wid, uid);
+                    } catch(AirDeskException a) {
+                        Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    inviteBtn.setChecked(false);
+                    notifyDataSetChanged();
 
 
                 }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.ForeignWSListCustomAdapter;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
@@ -64,7 +65,7 @@ public class ForeignWSActivity extends ActionBarActivity {
 
 
         //generate WS list
-        ArrayList<Workspace> list = context.getmDBHelper().getUserSubscriptions(context.getLoggedUser().getUserid());
+        UserSubscriptions list = context.getmDBHelper().getUserSubscriptions(context.getLoggedUser().getUserid());
 
         //instantiate custom adapter
         ForeignWSListCustomAdapter adapter = new ForeignWSListCustomAdapter(list, this, context);
