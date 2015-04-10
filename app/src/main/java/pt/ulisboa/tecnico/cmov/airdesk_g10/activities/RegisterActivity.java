@@ -29,7 +29,9 @@ public class RegisterActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         context = (AirDesk) getApplicationContext();
+
         this.registerBtn = (Button) findViewById(R.id.register_btn);
+
         this.registerBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -38,24 +40,30 @@ public class RegisterActivity extends ActionBarActivity {
                 String nickname = nickNameTxt.getText().toString();
                 String pass = passwordTxt.getText().toString();
                 String passconf = passwordConfirmationTxt.getText().toString();
+
                 if (!context.getmDBHelper().userExists(email)) {
                     if (pass.equals(passconf)) {
                         try {
                             context.getmDBHelper().addUser(email, pass, nickname);
-                            Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
-                            startActivity(intent);
                         } catch (AirDeskException a) {
                             Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
+                            return;
                         }
                     } else {
                         Toast.makeText(context, "Passwords Don't match", Toast.LENGTH_LONG).show();
+                        return;
                     }
                 } else {
                     Toast.makeText(context, "Email already exists.", Toast.LENGTH_LONG).show();
+                    return;
                 }
+                Toast.makeText(context, "User " + email + " registered with sucess.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
+                startActivity(intent);
             }
 
         });
+
         this.emailTxt    = (EditText) findViewById(R.id.email_txt);
         this.nickNameTxt = (EditText) findViewById(R.id.nickname_txt);
         this.passwordTxt = (EditText) findViewById(R.id.password_txt);
