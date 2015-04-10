@@ -89,6 +89,7 @@ public class WSListCustomAdapter extends BaseAdapter implements ListAdapter {
                     return;
                 }
                 Toast.makeText(context, "Workspace deleted with sucess.", Toast.LENGTH_LONG).show();
+                list.getWorkspaces().remove(position);
                 notifyDataSetChanged();
             }
         });

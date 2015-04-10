@@ -93,7 +93,7 @@ public class UserPermissionsActivity extends ActionBarActivity {
 
                 try {
 
-                   // context.getmDBHelper().changeSubscriptionData(sub);
+                   context.getmDBHelper().changeSubscriptionData(sub);
                 } catch (AirDeskException u){
                     Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                     return;

@@ -67,7 +67,7 @@ public class LoginActivity extends ActionBarActivity {
         this.usernameTxt = (EditText) findViewById(R.id.nickname_txt);
         this.passwordTxt = (EditText) findViewById(R.id.password_txt);
 
-        populateDomain();
+        //populateDomain();
 
     }
 

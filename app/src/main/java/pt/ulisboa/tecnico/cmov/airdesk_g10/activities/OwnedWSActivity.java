@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserWorkspaces;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
 
@@ -63,7 +64,14 @@ public class OwnedWSActivity extends ActionBarActivity {
             }
         });
         //generate WS list
-        UserWorkspaces list = context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid());
+        UserWorkspaces list;
+        try {
+            list = context.getmDBHelper().getUserWorkSpaces(context.getLoggedUser().getUserid());
+        } catch (AirDeskException u){
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
+
 
         //instantiate custom adapter
         WSListCustomAdapter adapter = new WSListCustomAdapter(list, this, context);

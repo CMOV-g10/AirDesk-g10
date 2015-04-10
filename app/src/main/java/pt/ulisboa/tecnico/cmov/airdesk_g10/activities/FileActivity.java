@@ -120,11 +120,13 @@ public class FileActivity extends ActionBarActivity {
                     f.setFilecontent(fileContentTxt.getText().toString());
 
                     try {
-                        //context.getmDBHelper().changeFileData(f);
+                        context.getmDBHelper().changeFileData(f);
                     } catch (AirDeskException u) {
                         Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                         return;
                     }
+
+
 
                     Toast.makeText(context, "File edited with sucess.", Toast.LENGTH_LONG).show();
 
@@ -138,6 +140,9 @@ public class FileActivity extends ActionBarActivity {
                         Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                         return;
                     }
+
+                 //   long currentSize = context.getmDBHelper().get
+
 
                     try {
                         context.getmDBHelper().addFile(ws.getWsowner().getUseremail(), context.getLoggedUser().getUseremail(), ws.getWsname(),

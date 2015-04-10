@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Subscription;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserWorkspaces;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceSubscriptions;
@@ -150,12 +151,20 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public ArrayList<Workspace> getUserWorkSpaces(int uid){
+    public UserWorkspaces getUserWorkSpaces(int uid){
         Cursor cUHW;
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlUHW= "SELECT * FROM "+AirDeskContract.UserHasWorkspaceEntry.TABLE_NAME;
         ArrayList<Workspace> wid=new ArrayList<Workspace>();
         cUHW=db.rawQuery(SqlUHW,null);
+
+        User u;
+        try {
+            u = getUser(uid);
+        }catch(AirDeskException w){
+            throw w;
+        }
+
 
         try{
             cUHW.moveToFirst();
@@ -166,13 +175,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                 cUHW.moveToNext();
             }
             cUHW.close();
-            return wid;
-        } catch(WorkspaceDoesNotExistException w){
+            return new UserWorkspaces(u, wid);
+        } catch(AirDeskException w){
              cUHW.close();
             throw w;
-        } catch(UserDoesNotExistException u){
-             cUHW.close();
-            throw u;
         }
     }
 
@@ -303,7 +309,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     public ArrayList<Workspace> getWorkspaceByTags(String tag){
         SQLiteDatabase db= this.getReadableDatabase();
         String query= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;
-        Cursor c= db.rawQuery(query,null);
+        Cursor c= db.rawQuery(query, null);
         c.moveToFirst();
         String delim = ",";
         String tags[];
@@ -411,8 +417,8 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     public int getWorkspaceId(String wsname,int ownerID) {
 
-        ArrayList<Workspace> wlist= new ArrayList<>(this.getUserWorkSpaces(ownerID));
-        for(Workspace w:wlist){
+        UserWorkspaces wlist= this.getUserWorkSpaces(ownerID);
+        for(Workspace w:wlist.getWorkspaces()){
             if(w.getWsname().equals(wsname)){
                 return w.getWsid();}
         }
@@ -675,10 +681,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             uid = this.getUserId(username);
         }catch(AirDeskException u){ throw u;}
 
-        ArrayList<Workspace> wid=this.getUserWorkSpaces(uid);
+        UserWorkspaces wid=this.getUserWorkSpaces(uid);
 
 
-            for(Workspace w: wid){
+            for(Workspace w: wid.getWorkspaces()){
                 if(w.getWsname().equals(wname)){
 
                     return true;
@@ -994,7 +1000,23 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         values.put(AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_DELETE_PERM, subscription.isDeletePermission());
 
         db.update(AirDeskContract.WorkspaceHasSubscriptionsEntry.TABLE_NAME, values, AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_WSID + " =" + subscription.getWorkspace().getWsid()
-                + " AND " + AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID + " ="  + subscription.getUser().getUserid(), null);
+                + " AND " + AirDeskContract.WorkspaceHasSubscriptionsEntry.COLUMN_WHS_UID + " =" + subscription.getUser().getUserid(), null);
+    }
+
+    public boolean isSubscribed(int uid,int wid){
+        WorkspaceSubscriptions ws;
+        try {
+            ws = getWorkspaceSubscribers(wid);
+        } catch (AirDeskException u){throw u;}
+
+        ArrayList<User> list = ws.getSubscriptions();
+        for(User u:list){
+            if(u.getUserid()==uid){
+                return true;
+            }
+        }
+        return false;
+
     }
 
     public boolean removeSubscriptionFromUser(int wid,int uid){
@@ -1019,13 +1041,21 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             throw new WorkspaceDoesNotExistException(wid);
         }
         SQLiteDatabase db= this.getWritableDatabase();
-
+        db.beginTransaction();
+        boolean d1 = false;
+        boolean d2 = false;
+        try {
             String wcFE = AirDeskContract.FileEntry.COLUMN_FILE_ID + " = " + fid;
+        String wcFEn = AirDeskContract.WorkspaceHasFileEntry.COLUMN_WHF_FID + " = " + fid;
 
-            boolean d1=db.delete(AirDeskContract.FileEntry.TABLE_NAME,wcFE,null)>0;
-            boolean d2=db.delete(AirDeskContract.WorkspaceHasFileEntry.TABLE_NAME, wcFE, null)>0;
-            return d1&&d2;
+            d1=db.delete(AirDeskContract.FileEntry.TABLE_NAME,wcFE,null)>0;
+            d2=db.delete(AirDeskContract.WorkspaceHasFileEntry.TABLE_NAME, wcFEn, null)>0;
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
 
+        return d1&&d2;
     }
 
     public boolean removeWorkspace(int wid){
