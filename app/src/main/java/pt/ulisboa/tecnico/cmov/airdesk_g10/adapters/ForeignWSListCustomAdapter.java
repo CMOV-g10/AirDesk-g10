@@ -11,13 +11,10 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileListActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 /**
@@ -62,7 +59,7 @@ public class ForeignWSListCustomAdapter extends BaseAdapter implements ListAdapt
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.getSubscriptions().get(position).getWorkspace().getWsname());
+        listItemText.setText(list.getSubscriptions().get(position).getWorkspace().getWsname()+" by "+list.getSubscriptions().get(position).getWorkspace().getWsowner().getUseremail());
 
         listItemText.setOnClickListener(new View.OnClickListener(){
             @Override
