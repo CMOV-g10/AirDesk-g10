@@ -165,8 +165,6 @@ public class ConfigWSActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ConfigWSActivity.this, MainActivity.class);
-                intent.putExtra("NEW_WS",isNewWS);
-                intent.putExtra("WS_ID", wsID);
                 startActivity(intent);
             }
         });

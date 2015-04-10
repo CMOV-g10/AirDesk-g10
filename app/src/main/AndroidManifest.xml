@@ -46,7 +46,7 @@
             android:label="@string/title_activity_file_list" >
         </activity>
         <activity
-            android:name=".activities.EditFileActivity"
+            android:name=".activities.FileActivity"
             android:label="@string/title_activity_edit_file" >
         </activity>
         <activity

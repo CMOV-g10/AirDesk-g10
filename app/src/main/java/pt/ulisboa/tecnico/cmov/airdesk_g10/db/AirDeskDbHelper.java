@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Subscription;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.FileDoesNotExistException;
@@ -292,12 +293,19 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<File> getWorkspaceFiles(int wid) {
+    public WorkspaceFiles getWorkspaceFiles(int wid) {
         Cursor c;
         SQLiteDatabase db = this.getReadableDatabase();
         String SqlWHF= "SELECT * FROM " + AirDeskContract.WorkspaceHasFileEntry.TABLE_NAME;
         ArrayList<File> files = new ArrayList<File>();
         c=db.rawQuery(SqlWHF,null);
+
+        Workspace ws;
+        try{
+            ws = getWorkspace(wid);
+        }catch(AirDeskException u){
+            throw  u;
+        }
 
         try{
             c.moveToFirst();
@@ -308,13 +316,10 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
                 c.moveToNext();
             }
             c.close();
-            return files;
-        } catch(FileDoesNotExistException f){
+            return new WorkspaceFiles(ws,files);
+        } catch(AirDeskException f){
             c.close();
             throw f;
-        } catch(UserDoesNotExistException u){
-            c.close();
-            throw u;
         }
     }
 
@@ -665,7 +670,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
 
     }
     public boolean fileExists(String title,int wid) {
-        ArrayList<File> filelist;
+        WorkspaceFiles filelist;
         try {
             filelist = getWorkspaceFiles(wid);
         } catch(FileDoesNotExistException f){
@@ -673,7 +678,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         } catch(WorkspaceDoesNotExistException w){
             throw w;
         }
-        for (File f : filelist) {
+        for (File f : filelist.getFiles()) {
             if (f.getFiletitle().equals(title)) {
                 return true;
             }
@@ -682,7 +687,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
     }
 
     public boolean fileExists(int fid,int wid) {
-        ArrayList<File> filelist;
+        WorkspaceFiles filelist;
         try {
             filelist = getWorkspaceFiles(wid);
         } catch(FileDoesNotExistException f){
@@ -690,7 +695,7 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
         } catch(WorkspaceDoesNotExistException w){
             throw w;
         }
-        for (File f : filelist) {
+        for (File f : filelist.getFiles()) {
             if (f.getFileid()==fid) {
                 return true;
             }

@@ -10,16 +10,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.FileListCustomAdapter;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Subscription;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 
 public class FileListActivity extends ActionBarActivity {
@@ -34,6 +31,14 @@ public class FileListActivity extends ActionBarActivity {
     private Button backBtn;
 
     private ListView fileList;
+
+    public int getWsID() {
+        return wsID;
+    }
+
+    public boolean isOwned() {
+        return isOwned;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +56,39 @@ public class FileListActivity extends ActionBarActivity {
         this.createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                WorkspaceFiles list = context.getmDBHelper().getWorkspaceFiles(wsID);
 
+                Workspace ws;
+                try {
+                    ws = context.getmDBHelper().getWorkspace(wsID);
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                //I'm the owner
+                if(!(ws.getWsowner().getUserid() == context.getLoggedUser().getUserid())){
+                    Subscription sub = context.getmDBHelper().getSubscription(ws.getWsid(), context.getLoggedUser().getUserid());
+                    if (!sub.isWritePermission()){
+                        Toast.makeText(context, "User don't have permission to create.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+
+                Intent intent = new Intent(context, FileActivity.class);
+                intent.putExtra("OP", FileActivity.OPERATION_CREATE);
+                intent.putExtra("F_ID", 0);
+                intent.putExtra("OWNED", isOwned);
+                intent.putExtra("WS_ID", wsID);
+                startActivity(intent);
             }
         });
         this.homeBtn = (Button) findViewById(R.id.home_btn);
         this.homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(FileListActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
         this.backBtn = (Button) findViewById(R.id.back_btn);
@@ -76,7 +106,7 @@ public class FileListActivity extends ActionBarActivity {
         });
 
         //generate WS list
-        ArrayList<File> list = context.getmDBHelper().getWorkspaceFiles(wsID);
+        WorkspaceFiles list = context.getmDBHelper().getWorkspaceFiles(wsID);
 
         //instantiate custom adapter
         FileListCustomAdapter adapter = new FileListCustomAdapter(list, this, context);

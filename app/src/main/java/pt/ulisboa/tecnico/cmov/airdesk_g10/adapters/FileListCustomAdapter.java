@@ -11,15 +11,13 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.ConfigWSActivity;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.FileListActivity;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Subscription;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceFiles;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 /**
@@ -28,11 +26,11 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
 
 
-    private ArrayList<File> list = new ArrayList<File>();
+    private WorkspaceFiles list;
     private Context context;
     private AirDesk airDesk;
 
-    public FileListCustomAdapter(ArrayList<File> list, Context context, AirDesk airDesk) {
+    public FileListCustomAdapter(WorkspaceFiles list, Context context, AirDesk airDesk) {
         this.list = list;
         this.context = context;
         this.airDesk = airDesk;
@@ -40,12 +38,12 @@ public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
 
     @Override
     public int getCount() {
-        return list.size();
+        return list.getFiles().size();
     }
 
     @Override
     public Object getItem(int pos) {
-        return list.get(pos);
+        return list.getFiles().get(pos);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.get(position).getFiletitle());
+        listItemText.setText(list.getFiles().get(position).getFiletitle());
         listItemText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -85,7 +83,7 @@ public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
 
                 int ws_ID;
                 try {
-                    ws_ID = airDesk.getmDBHelper().getWorkspaceByFile(list.get(position).getFileid());
+                    ws_ID = airDesk.getmDBHelper().getWorkspaceByFile(list.getFiles().get(position).getFileid());
                 } catch (AirDeskException u){
                     Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                     return;
@@ -102,33 +100,99 @@ public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
 
 
                 //I'm the owner
-                if(ws.getWsowner().getUserid() == airDesk.getLoggedUser().getUserid()){
-
-                } else {
-
+                if(!(ws.getWsowner().getUserid() == airDesk.getLoggedUser().getUserid())){
                     Subscription sub = airDesk.getmDBHelper().getSubscription(ws.getWsid(), airDesk.getLoggedUser().getUserid());
-
-
-
+                    if (!sub.isDeletePermission()){
+                        Toast.makeText(context, "User don't have permission to delete.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                 }
 
+                try{
+                    airDesk.getmDBHelper().removeFile(list.getFiles().get(position).getFileid(), ws_ID);
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
 
-
-
-
+                list.getFiles().remove(position); //or some other task
                 notifyDataSetChanged();
             }
         });
         editBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                int ws_ID;
+                try {
+                    ws_ID = airDesk.getmDBHelper().getWorkspaceByFile(list.getFiles().get(position).getFileid());
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
 
+                Workspace ws;
+                try {
+                    ws = airDesk.getmDBHelper().getWorkspace(ws_ID);
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+
+                //I'm the owner
+                if(!(ws.getWsowner().getUserid() == airDesk.getLoggedUser().getUserid())){
+                    Subscription sub = airDesk.getmDBHelper().getSubscription(ws.getWsid(), airDesk.getLoggedUser().getUserid());
+                    if (!sub.isWritePermission()){
+                        Toast.makeText(context, "User don't have permission to edit.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+
+                Intent intent = new Intent(context, FileActivity.class);
+                intent.putExtra("OP", FileActivity.OPERATION_EDIT);
+                intent.putExtra("F_ID", list.getFiles().get(position).getFileid());
+                intent.putExtra("OWNED", ((FileListActivity)context).isOwned());
+                intent.putExtra("WS_ID", ((FileListActivity)context).getWsID());
+                context.startActivity(intent);
             }
         });
         readBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                int ws_ID;
+                try {
+                    ws_ID = airDesk.getmDBHelper().getWorkspaceByFile(list.getFiles().get(position).getFileid());
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
 
+                Workspace ws;
+                try {
+                    ws = airDesk.getmDBHelper().getWorkspace(ws_ID);
+                } catch (AirDeskException u){
+                    Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+
+                //I'm the owner
+                if(!(ws.getWsowner().getUserid() == airDesk.getLoggedUser().getUserid())){
+                    Subscription sub = airDesk.getmDBHelper().getSubscription(ws.getWsid(), airDesk.getLoggedUser().getUserid());
+                    if (!sub.isReadPermission()){
+                        Toast.makeText(context, "User don't have permission to read.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+
+                Intent intent = new Intent(context, FileActivity.class);
+                intent.putExtra("OP", FileActivity.OPERATION_READ);
+                intent.putExtra("F_ID", list.getFiles().get(position).getFileid());
+                intent.putExtra("OWNED", ((FileListActivity)context).isOwned());
+                intent.putExtra("WS_ID", ((FileListActivity)context).getWsID());
+                context.startActivity(intent);
             }
         });
 
