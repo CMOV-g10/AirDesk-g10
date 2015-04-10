@@ -17,31 +17,15 @@ public class Workspace {
     private boolean wspublic;
     private User wsowner;
 
-    private ArrayList<String> wstags;
+    private String wstags;
 
     private boolean readPermission;
     private boolean writePermission;
     private boolean createPermission;
     private boolean deletePermission;
 
-
-    public Workspace(int wsid, String wsname, int wsquota, boolean wspublic, User wsowner, ArrayList<String> wstags, boolean readPermission, boolean writePermission, boolean createPermission, boolean deletePermission) {
-        this.wsid = wsid;
-        this.wsname = wsname;
-        this.wsquota = wsquota;
-        this.wspublic = wspublic;
-        this.wsowner = wsowner;
-        this.wstags = wstags;
-        this.readPermission = readPermission;
-        this.writePermission = writePermission;
-        this.createPermission = createPermission;
-        this.deletePermission = deletePermission;
-    }
-
     public Workspace(int wsid, String wsname, int wsquota, boolean wspublic, User wsowner, String wstags, boolean readPermission, boolean writePermission, boolean createPermission, boolean deletePermission) {
-        String delims = ",";
-        String[] tokens = wstags.split(delims);
-        this.wstags = new ArrayList<String>(Arrays.asList(tokens));
+        this.wstags = wstags;
         this.wsid = wsid;
         this.wsname = wsname;
         this.wsquota = wsquota;
@@ -69,19 +53,7 @@ public class Workspace {
         return wspublic;
     }
 
-    public String getWstagsInString() {
-        String result = "";
-        for(String s : wstags){
-            result = result + s + ",";
-        }
-
-        if(!result.equals(""))
-            return result.substring(0,result.length()-1);
-        else
-            return result;
-    }
-
-    public ArrayList<String> getWstags() {
+    public String getWstags() {
         return wstags;
     }
 
@@ -105,14 +77,8 @@ public class Workspace {
         this.wspublic = wspublic;
     }
 
-    public void setWstags(ArrayList<String> wstags) {
-        this.wstags = wstags;
-    }
-
     public void setWstags(String wstags) {
-        String delims = "[,]";
-        String[] tokens = wstags.split(delims);
-        this.wstags = new ArrayList<String>(Arrays.asList(tokens));
+        this.wstags = wstags;
     }
 
     public void setWsowner(User wsowner) {
