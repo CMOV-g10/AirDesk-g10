@@ -7,30 +7,37 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:text="Owned Workspaces"
         android:id="@+id/ownedWS_btn"
         android:longClickable="false"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/foreignWS_btn"
-        android:layout_alignEnd="@+id/foreignWS_btn"
+        android:layout_marginBottom="77dp"
+        android:layout_above="@+id/foreignWS_btn"
         android:layout_alignLeft="@+id/foreignWS_btn"
         android:layout_alignStart="@+id/foreignWS_btn"
-        android:layout_marginBottom="275dp"
-        android:layout_marginTop="25dp" />
+        android:layout_alignRight="@+id/foreignWS_btn"
+        android:layout_alignEnd="@+id/foreignWS_btn" />
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:text="Foreign Workspaces"
         android:id="@+id/foreignWS_btn"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/logout_btn"
+        android:layout_marginBottom="97dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="275dp"
-        android:layout_marginBottom="25dp" />
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:id="@+id/logout_btn"
+
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="53dp" />
 </RelativeLayout>
