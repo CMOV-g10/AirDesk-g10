@@ -23,7 +23,7 @@
         android:text="Invite"
         android:textOn="Remove"
         android:textOff="Invite"
-        android:checked="false" />
+        android:checked="true" />
 
     <Button
         android:layout_width="wrap_content"

@@ -115,6 +115,7 @@ public class FileListCustomAdapter extends BaseAdapter implements ListAdapter {
                     return;
                 }
 
+                Toast.makeText(context, "File deleted with sucess.", Toast.LENGTH_LONG).show();
                 list.getFiles().remove(position); //or some other task
                 notifyDataSetChanged();
             }

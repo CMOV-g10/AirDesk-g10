@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,17 +18,18 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.activities.SubscriptionListActivity;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceSubscriptions;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 /**
  * Created by Pedro on 4/9/2015.
  */
 public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<User> list = new ArrayList<User>();
+    private WorkspaceSubscriptions list;
     private Context context;
     private AirDesk airDesk;
 
-    public SubscriptionListCustomAdapter(ArrayList<User> list, Context context, AirDesk airDesk) {
+    public SubscriptionListCustomAdapter(WorkspaceSubscriptions list, Context context, AirDesk airDesk) {
         this.list = list;
         this.context = context;
         this.airDesk = airDesk;
@@ -35,12 +37,12 @@ public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAd
 
     @Override
     public int getCount() {
-        return list.size();
+        return list.getSubscriptions().size();
     }
 
     @Override
     public Object getItem(int pos) {
-        return list.get(pos);
+        return list.getSubscriptions().get(pos);
     }
 
     @Override
@@ -60,18 +62,26 @@ public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAd
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView)view.findViewById(R.id.list_item_string);
-        listItemText.setText(list.get(position).getUseremail());
+        listItemText.setText(list.getSubscriptions().get(position).getUseremail());
 
         //Handle buttons and add onClickListeners
         final ToggleButton inviteBtn = (ToggleButton) view.findViewById(R.id.invite_btn);
-        inviteBtn.setChecked(true);
+
+        Button permissionsBtn = (Button) view.findViewById(R.id.editPerm_btn);
+
+        permissionsBtn.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+
+              }
+        });
 
         inviteBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 boolean on = inviteBtn.isChecked();
                 if (on){
-                    int userId = list.get(position).getUserid();
+                    int userId = list.getSubscriptions().get(position).getUserid();
                     int wid = ((SubscriptionListActivity) context).getWsID();
                     int uid = airDesk.getLoggedUser().getUserid();
 
@@ -92,11 +102,10 @@ public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAd
                     }
 
                     inviteBtn.setChecked(true);
-                    notifyDataSetChanged();
 
 
                 }else{
-                    int userId = list.get(position).getUserid();
+                    int userId = list.getSubscriptions().get(position).getUserid();
                     int wid = ((SubscriptionListActivity) context).getWsID();
                     int uid = airDesk.getLoggedUser().getUserid();
 
@@ -108,7 +117,6 @@ public class SubscriptionListCustomAdapter extends BaseAdapter implements ListAd
                     }
 
                     inviteBtn.setChecked(false);
-                    notifyDataSetChanged();
 
 
                 }

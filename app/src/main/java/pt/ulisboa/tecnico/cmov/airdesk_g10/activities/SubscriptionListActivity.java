@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.SubscriptionListCustomAdapte
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.WSListCustomAdapter;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.User;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.WorkspaceSubscriptions;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserAlreadyExistsException;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
@@ -111,7 +112,7 @@ public class SubscriptionListActivity extends ActionBarActivity {
                 Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
                 return;
             }
-                ArrayList<User> list;
+                WorkspaceSubscriptions list;
             try {
                 list = context.getmDBHelper().getWorkspaceSubscribers(wsID);
             } catch (AirDeskException u) {
@@ -133,16 +134,15 @@ public class SubscriptionListActivity extends ActionBarActivity {
             }
         });
 
-        ArrayList<User> list = new ArrayList<User>();
+        WorkspaceSubscriptions list;
 
-        if(!isNewWS) {
             try {
                list= context.getmDBHelper().getWorkspaceSubscribers(wsID);
             } catch (WorkspaceDoesNotExistException u) {
                 Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
                 return;
             }
-        }
+
 
         SubscriptionListCustomAdapter adapter = new SubscriptionListCustomAdapter(list, myContext, context);
 

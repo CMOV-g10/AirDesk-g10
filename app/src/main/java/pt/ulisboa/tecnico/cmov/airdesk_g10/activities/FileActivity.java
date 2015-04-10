@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.File;
+import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.AirDeskException;
 
 
@@ -30,8 +32,8 @@ public class FileActivity extends ActionBarActivity {
     private int wsID;
     private boolean isOwned;
 
-    private EditText fileTitle;
-    private EditText fileContent;
+    private EditText fileTitleTxt;
+    private EditText fileContentTxt;
 
     private Button backBtn;
     private Button homeBtn;
@@ -55,22 +57,25 @@ public class FileActivity extends ActionBarActivity {
         this.homeBtn = (Button) findViewById(R.id.home_btn);
         this.editBtn = (Button) findViewById(R.id.edit_btn);
 
-        this.fileTitle = (EditText) findViewById(R.id.fileTitle_txt);
-        this.fileContent = (EditText) findViewById(R.id.fileContent_txt);
+        this.fileTitleTxt = (EditText) findViewById(R.id.fileTitle_txt);
+        this.fileContentTxt = (EditText) findViewById(R.id.fileContent_txt);
 
         if(operation == OPERATION_READ || operation == OPERATION_EDIT){
-
+            File f;
             try {
-                context.getmDBHelper().getFile(fID);
+               f= context.getmDBHelper().getFile(fID);
             } catch (AirDeskException u){
                 Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                return;
             }
+            this.fileTitleTxt.setText(f.getFiletitle(), TextView.BufferType.EDITABLE);
+            this.fileContentTxt.setText(f.getFilecontent(), TextView.BufferType.EDITABLE);
         }
 
         if (operation == OPERATION_READ){
             this.editBtn.setVisibility(View.INVISIBLE);
-            this.fileTitle.setKeyListener(null);
-            this.fileContent.setKeyListener(null);
+            this.fileTitleTxt.setKeyListener(null);
+            this.fileContentTxt.setKeyListener(null);
 
         } else if (operation == OPERATION_EDIT){
             editBtn.setText("EDIT", TextView.BufferType.EDITABLE);
@@ -101,10 +106,55 @@ public class FileActivity extends ActionBarActivity {
         this.editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(operation == OPERATION_EDIT) {
+
+                    File f;
+                    try {
+                        f = context.getmDBHelper().getFile(fID);
+                    } catch (AirDeskException u) {
+                        Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    f.setFiletitle(fileTitleTxt.getText().toString());
+                    f.setFilecontent(fileContentTxt.getText().toString());
+
+                    try {
+                        //context.getmDBHelper().changeFileData(f);
+                    } catch (AirDeskException u) {
+                        Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    Toast.makeText(context, "File edited with sucess.", Toast.LENGTH_LONG).show();
+
+
+                } else if (operation == OPERATION_CREATE){
+                    Workspace ws;
+
+                    try {
+                        ws = context.getmDBHelper().getWorkspace(wsID);
+                    } catch (AirDeskException u){
+                        Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    try {
+                        context.getmDBHelper().addFile(ws.getWsowner().getUseremail(), context.getLoggedUser().getUseremail(), ws.getWsname(),
+                                fileTitleTxt.getText().toString(), fileContentTxt.getText().toString());
+                    } catch (AirDeskException u){
+                        Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    Toast.makeText(context, "File created with sucess.", Toast.LENGTH_LONG).show();
+
+                }
+
                 Intent intent = new Intent(FileActivity.this, FileListActivity.class);
                 intent.putExtra("OWNED", isOwned);
                 intent.putExtra("WS_ID", wsID);
                 startActivity(intent);
+
             }
         });
     }
