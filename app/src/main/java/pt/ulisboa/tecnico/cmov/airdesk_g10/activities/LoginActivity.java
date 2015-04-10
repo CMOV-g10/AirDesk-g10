@@ -103,7 +103,13 @@ public class LoginActivity extends ActionBarActivity {
         } catch (AirDeskException u) {
             Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
         }
-
+        try {
+            this.context.getmDBHelper().addSubscriberToWorkspace(
+                    this.context.getmDBHelper().getWorkspaceId("CMOV", this.context.getmDBHelper().getUserId("p")),
+                    this.context.getmDBHelper().getUserId("a"), true, true, true, true);
+        } catch (AirDeskException u) {
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+        }
         try {
             this.context.getmDBHelper().addSubscriberToWorkspace(
                     this.context.getmDBHelper().getWorkspaceId("AASMA", this.context.getmDBHelper().getUserId("p")),

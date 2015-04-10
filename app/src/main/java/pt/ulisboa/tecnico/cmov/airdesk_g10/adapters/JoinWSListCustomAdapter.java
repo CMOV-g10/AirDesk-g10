@@ -5,9 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
@@ -60,16 +61,39 @@ public class JoinWSListCustomAdapter extends BaseAdapter implements ListAdapter 
         listItemText.setText(list.get(position).getWsname());
 
         //Handle buttons and add onClickListeners
-        final Button joinBtn = (Button) view.findViewById(R.id.join_btn);
+        final ToggleButton joinBtn = (ToggleButton) view.findViewById(R.id.join_btn);
+        final int wid = list.get(position).getWsid();
+        final int uid = airDesk.getLoggedUser().getUserid();
 
+        boolean isSubscribed;
+        try{
+            isSubscribed = airDesk.getmDBHelper().isSubscribed(uid,wid);
+        } catch (AirDeskException u){
+            Toast.makeText(context, u.getMessage(), Toast.LENGTH_LONG).show();
+            return view;
+        }
+
+        joinBtn.setChecked(isSubscribed);
         joinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int wid = list.get(position).getWsid();
-                int uid = list.get(position).getWsowner().getUserid();
-                try {
-                    if (airDesk.getmDBHelper().removeSubscriptionFromUser(wid, uid))
-                        list.remove(position); //or some other task
+                boolean on =joinBtn.isChecked();
+
+                Workspace w;
+                try{
+                    w= airDesk.getmDBHelper().getWorkspace(wid);
+                }
+                catch(AirDeskException a){
+                    Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                try {if(on){
+                    airDesk.getmDBHelper().addSubscriberToWorkspace(wid,uid,w.isReadPermission(),w.isCreatePermission(),
+                            w.isCreatePermission(),w.isDeletePermission());}
+                    else{ airDesk.getmDBHelper().removeSubscriptionFromUser(wid,uid);
+
+                }
+                       // list.remove(position); //or some other task
                 } catch(AirDeskException a) {a.getMessage();}
                 //notifyDataSetChanged();
             }

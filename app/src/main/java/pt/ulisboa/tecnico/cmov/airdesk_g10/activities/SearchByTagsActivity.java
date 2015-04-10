@@ -38,6 +38,7 @@ public class SearchByTagsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_search_by_tags);
         context = (AirDesk) getApplicationContext();
         myContext = this;
+
         this.homeBtn = (Button) findViewById(R.id.home_btn);
         this.homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +71,7 @@ public class SearchByTagsActivity extends ActionBarActivity {
                         wsList.setAdapter(adapter);}
                     catch (AirDeskException a){
                         Toast.makeText(context,a.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
                     }
                 }
                 else{

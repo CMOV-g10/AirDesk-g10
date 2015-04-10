@@ -299,7 +299,21 @@ public class AirDeskDbHelper extends SQLiteOpenHelper {
             throw u;
         }
     }
+    public boolean isSubscribed(int uid,int wid){
+        WorkspaceSubscriptions ws;
+        try {
+            ws = getWorkspaceSubscribers(wid);
+        } catch (AirDeskException u){throw u;}
 
+        ArrayList<User> list = ws.getSubscriptions();
+        for(User u:list){
+            if(u.getUserid()==uid){
+                return true;
+            }
+        }
+        return false;
+
+    }
     public ArrayList<Workspace> getWorkspaceByTags(String tag){
         SQLiteDatabase db= this.getReadableDatabase();
         String query= "SELECT * FROM "+AirDeskContract.WorkspaceEntry.TABLE_NAME;

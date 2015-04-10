@@ -8,17 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.airdesk_g10.AirDesk;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.R;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.adapters.ForeignWSListCustomAdapter;
 import pt.ulisboa.tecnico.cmov.airdesk_g10.core.UserSubscriptions;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.core.Workspace;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.UserDoesNotExistException;
-import pt.ulisboa.tecnico.cmov.airdesk_g10.exceptions.WorkspaceDoesNotExistException;
 
 
 public class ForeignWSActivity extends ActionBarActivity {
@@ -41,8 +35,6 @@ public class ForeignWSActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ForeignWSActivity.this, SearchByTagsActivity.class);
-                intent.putExtra("NEW_WS", true);
-                intent.putExtra("WS_ID", 0);
                 startActivity(intent);
             }
         });
