@@ -23,6 +23,7 @@ public class RegisterActivity extends ActionBarActivity {
     private EditText passwordTxt;
     private EditText passwordConfirmationTxt;
     private Button registerBtn;
+    private Button backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,14 @@ public class RegisterActivity extends ActionBarActivity {
 
         });
 
+        this.backBtn = (Button) findViewById(R.id.back_btn);
+        this.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
         this.emailTxt    = (EditText) findViewById(R.id.email_txt);
         this.nickNameTxt = (EditText) findViewById(R.id.nickname_txt);
         this.passwordTxt = (EditText) findViewById(R.id.password_txt);

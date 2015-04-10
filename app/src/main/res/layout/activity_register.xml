@@ -1,35 +1,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="pt.ulisboa.tecnico.cmov.airdesk_g10.activities.RegisterActivity">
 
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
         android:id="@+id/email_txt"
-        android:layout_above="@+id/password_txt"
+        android:layout_marginTop="105dp"
+        android:hint="Your Email"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/nickname_txt"
+        android:layout_alignEnd="@+id/nickname_txt"
         android:layout_alignLeft="@+id/nickname_txt"
-        android:layout_alignStart="@+id/nickname_txt"
-        android:layout_marginBottom="42dp"
-        android:hint="Your email" />
+        android:layout_alignStart="@+id/nickname_txt" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/nickname_txt"
         android:hint="Choose Nickname"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/password_txt"
-        android:layout_marginRight="70dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="70dp"
-        android:layout_below="@+id/register_btn"
-        android:layout_alignLeft="@+id/password_txt" />
+        android:layout_below="@+id/email_txt"
+        android:layout_alignRight="@+id/passwordConfirmation_txt"
+        android:layout_alignEnd="@+id/passwordConfirmation_txt"
+        android:layout_alignLeft="@+id/passwordConfirmation_txt"
+        android:layout_alignStart="@+id/passwordConfirmation_txt" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -38,7 +37,7 @@
         android:ems="10"
         android:id="@+id/password_txt"
         android:hint="Choose Password"
-        android:layout_below="@+id/nickname_txt"
+        android:layout_below="@+id/passwordConfirmation_txt"
         android:layout_centerHorizontal="true" />
 
     <EditText
@@ -48,10 +47,8 @@
         android:ems="10"
         android:id="@+id/passwordConfirmation_txt"
         android:hint="Confirm Password"
-        android:layout_below="@+id/password_txt"
-        android:layout_alignLeft="@+id/nickname_txt"
-        android:layout_alignStart="@+id/nickname_txt"
-        android:layout_marginTop="47dp" />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -59,7 +56,16 @@
         android:text="Register"
         android:id="@+id/register_btn"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="60dp" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:id="@+id/back_btn"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
