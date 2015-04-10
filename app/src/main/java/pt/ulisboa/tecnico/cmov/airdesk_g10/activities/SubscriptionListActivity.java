@@ -105,7 +105,7 @@ public class SubscriptionListActivity extends ActionBarActivity {
             }
 
             try {
-                context.getmDBHelper().addSubscriberToWorkspace(wsID, context.getLoggedUser().getUserid(), ws.isReadPermission(), ws.isWritePermission(), ws.isCreatePermission(), ws.isDeletePermission());
+                context.getmDBHelper().addSubscriberToWorkspace(wsID, user.getUserid(), ws.isReadPermission(), ws.isWritePermission(), ws.isCreatePermission(), ws.isDeletePermission());
             } catch(AirDeskException a) {
                 Toast.makeText(context, a.getMessage(), Toast.LENGTH_LONG).show();
                 return;
